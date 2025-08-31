@@ -554,7 +554,7 @@ body {
   transform: scale(1.1);
 }
 
-.vrijeme_gumb {
+.vrijeme_gumbic {
   background: #A74449;
   color: #25375F;
   font-family: 'Labrada', serif;
@@ -569,7 +569,7 @@ body {
   transition: background 0.3s, color 0.3s;
 }
 
-.vrijeme_gumb:hover {
+.vrijeme_gumbic:hover {
   background: #8AC3CC;
   color: #A74449;
 }
@@ -711,6 +711,9 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  position: fixed;  /* Dodaj ovo */
+  top: 0;           /* Dodaj ovo */
+  left: 0;          /* Dodaj ovo */
 }
 
 .fokus_kartica {
@@ -718,27 +721,30 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 30px;        /* Dodaj razmak između elemenata */
 }
 
-.fokus_lik {
-  width: 110px;
-  height: 110px;
-  background: #720C11;
-  border-radius: 28px;
-  margin-bottom: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+#fokus_sprite {
+  margin-top: 300px;;
+  width: 250px !important;
+  height: 250px !important;
+  background-repeat: no-repeat !important;
+  background-size: 750px 250px !important;  /* 3 frame-a × 250px */
+  background-color: #25314E !important;
+border-radius: 10px;
+  
 }
 
 .fokus_vrijeme {
-  font-family: 'Labrada', serif;
-  font-size: 3.8rem;
-  font-weight: 600;
-  color: #fff;
-  letter-spacing: 4px;
-  text-align: center;
+  position: fixed !important;
+  margin-top:800px;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 1001 !important;
+  color: #25375F !important;
+  font-size: 100px !important;
 }
+
 
 
 .outfit_cards_grid {
@@ -817,4 +823,50 @@ body {
   width: 22px;
   height: 22px;
   vertical-align: middle;
+}
+
+
+/* Luffy default sprite */
+.sprite.luffy-default {
+  width: 200px;
+  height: 200px;
+  background-size: 1200px 200px; /* 6 frame-ova × 200px širina */
+}
+.sprite.usop-default {
+  width: 200px;
+  height: 200px;
+  background-size: 1200px 200px; /* 6 frame-ova × 200px širina */
+}
+.sprite.zoro-default {
+  width: 200px;
+  height: 200px;
+  background-size: 1200px 200px; /* 6 frame-ova × 200px širina */
+}
+.sprite.nami-default {
+  width: 200px;
+  height: 200px;
+  background-size: 1200px 200px; /* 6 frame-ova × 200px širina */
+}
+.sprite.sanji-default {
+  width: 200px;
+  height: 200px;
+  background-size: 1200px 200px; /* 6 frame-ova × 200px širina */
+}
+.sprite.chopper-default {
+  width: 200px;
+  height: 200px;
+  background-size: 1200px 200px; /* 6 frame-ova × 200px širina */
+}
+
+/* Dance outfit sprite */
+.sprite-luffy20 {
+ width: 195px;
+  height: 400px;
+  background-size: 585px 300px; /* 8 frame-ova × 250px širina */
+}
+
+.sprite-zoro20 {
+ width: 195px;
+  height: 400px;
+  background-size: 585px 300px; /* 8 frame-ova × 250px širina */
 }

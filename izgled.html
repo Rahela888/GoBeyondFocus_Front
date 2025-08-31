@@ -1,179 +1,183 @@
-<!DOCTYPE html>
-<html lang="hr">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Registracija i Login</title>
-  <link rel="stylesheet" href="stil.css" />
-</head>
-<body>
+  <!DOCTYPE html>
+  <html lang="hr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Registracija i Login</title>
+    <link rel="stylesheet" href="stil.css" />
+  </head>
+  <body>
 
-<!-- Registracija -->
-<div id="registracija" class="page visible">
-  <span class="registracija_logo">GoBeyondFocus</span>
-  <div class="registracija_pozadina">
-    <form id="forma_registracija" class="registracija_forma">
-      <h2 class="registracija_naslov">REGISTRACIJA</h2>
-      <label for="regEmail" class="registracija_oznaka">Email</label>
-      <input type="email" id="regEmail" required class="registracija_unos" />
-      <label for="regUsername" class="registracija_oznaka">Korisničko ime</label>
-      <input type="text" id="regUsername" required class="registracija_unos" />
-      <label for="regLozinka" class="registracija_oznaka">Lozinka</label>
-      <input type="password" id="regLozinka" required class="registracija_unos" />
-      <button type="submit" id="btn_registracija" class="registracija_gumb">Registriraj se</button>
-      <div class="registracija_dno">
-        <span>Imate račun?</span>
-        <a href="#" id="link_login" class="registracija_link">Prijavite se!</a>
-      </div>
-      <p id="greska_registracija" class="poruka_greska"></p>
-    </form>
-    <img class="registracija_luffy" src="https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/1b8702cd0888af976405af03a559e0e9-removebg-preview.png?alt=media&token=23eab6a1-0faa-47ba-b3f8-b5d81a80b9cd" alt="Luffy" />
-  </div>
-</div>
-
-<!-- Prijava -->
-<div id="prijava" class="page">
-  <div class="prijava_pozadina">
-    <span class="prijava_logo">GoBeyondFocus</span>
-    <form id="forma_prijava" class="prijava_forma">
-      <h2 class="prijava_naslov">PRIJAVA</h2>
-      <label for="logUsername" class="prijava_oznaka">Korisničko ime</label>
-      <input type="text" id="logUsername" required class="prijava_unos" />
-      <label for="logLozinka" class="prijava_oznaka">Lozinka</label>
-      <input type="password" id="logLozinka" required class="prijava_unos" />
-      <button type="submit" id="btn_prijava" class="prijava_gumb">Prijavi se</button>
-      <div class="prijava_dno">
-        <span>Nemate račun?</span>
-        <a href="#" id="link_registracija" class="prijava_link">Registrirajte se!</a>
-      </div>
-      <p id="greska_prijava" class="poruka_greska"></p>
-    </form>
-    <img class="prijava_luffy" src="https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/1b8702cd0888af976405af03a559e0e9-removebg-preview.png?alt=media&token=23eab6a1-0faa-47ba-b3f8-b5d81a80b9cd" alt="Luffy" />
-  </div>
-</div>
-
-<!-- Odabir lika -->
-<div id="odabir" class="page">
-  <div class="odabir_pozadina">
-    <div class="odabir_header">
-      <span class="odabir_logo">GoBeyondFocus</span>
-      <span class="odabir_username" id="odabir_username">Username</span>
-    </div>
-    <h2 class="odabir_naslov">Odaberi svog lika:</h2>
-    <div class="odabir_form">
-      <div class="odabir_kartica kartica_crvena" data-lik="luffy">
-        <img src="https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/luffy_logo.png?alt=media&token=944ae180-b307-453c-b729-31e6aab43b5f" alt="Luffy" class="odabir_slika" />
-      </div>
-      <div class="odabir_kartica kartica_zelena" data-lik="zoro">
-        <img src="https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/zoro_logo.png?alt=media&token=dabeabc4-3c05-4474-9a8c-bbdf8f10b5bc" alt="Zoro" class="odabir_slika" />
-      </div>
-      <div class="odabir_kartica kartica_zuta" data-lik="sanji">
-        <img src="https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/sanji_logo.png?alt=media&token=3363674a-3627-4dc0-8548-fa7acfed94f2" alt="Sanji" class="odabir_slika" />
-      </div>
-      <div class="odabir_kartica kartica_narancasta" data-lik="nami">
-        <img src="https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/nami_logo.png?alt=media&token=606ed272-3d15-4a64-b3c4-bb26fe3da56c" alt="Nami" class="odabir_slika" />
-      </div>
-      <div class="odabir_kartica kartica_roza" data-lik="chopper">
-        <img src="https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/mali_logo.png?alt=media&token=9c5ea1c3-37c2-4a29-afa1-4a583c1fbc86" alt="Chopper" class="odabir_slika" />
-      </div>
-      <div class="odabir_kartica kartica_smeda" data-lik="usop">
-        <img src="https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/usop_logo.png?alt=media&token=968cb119-a991-46f9-afa6-5b796c06b140" alt="Usop" class="odabir_slika" />
-      </div>
+    
+  <!-- Registracija -->
+  <div id="registracija" class="page visible">
+    <span class="registracija_logo">GoBeyondFocus</span>
+    <div class="registracija_pozadina">
+      <form id="forma_registracija" class="registracija_forma">
+        <h2 class="registracija_naslov">REGISTRACIJA</h2>
+        <label for="regEmail" class="registracija_oznaka">Email</label>
+        <input type="email" id="regEmail" required class="registracija_unos" />
+        <label for="regUsername" class="registracija_oznaka">Korisničko ime</label>
+        <input type="text" id="regUsername" required class="registracija_unos" />
+        <label for="regLozinka" class="registracija_oznaka">Lozinka</label>
+        <input type="password" id="regLozinka" required class="registracija_unos" />
+        <button type="submit" id="btn_registracija" class="registracija_gumb">Registriraj se</button>
+        <div class="registracija_dno">
+          <span>Imate račun?</span>
+          <a href="#" id="link_login" class="registracija_link">Prijavite se!</a>
+        </div>
+        <p id="greska_registracija" class="poruka_greska"></p>
+      </form>
+      <img class="registracija_luffy" src="https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/1b8702cd0888af976405af03a559e0e9-removebg-preview.png?alt=media&token=23eab6a1-0faa-47ba-b3f8-b5d81a80b9cd" alt="Luffy" />
     </div>
   </div>
-</div>
 
-<!-- Vrijeme stranica -->
-<div id="vrijeme" class="page">
-  <div class="vrijeme_header">
-    <span class="vrijeme_logo">GoBeyondFocus</span>
-    <span class="koin_iznos" id="koin_iznos"></span>
-    <div class="vrijeme_gumbi">
-      <button id="gumb_outfit" class="header_btn">
-        <img src="https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/image-removebg-preview%20(10).png?alt=media&token=dd5dd52b-2643-4bb2-8120-f597df320385"
-             alt="Outfit" />
-      </button>
-      <button id="gumb_vrijeme" class="header_btn">
-        <img src="https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/buttonpuz.png?alt=media&token=5d88d1c3-4845-46d3-8287-10f31656d9c8"
-             alt="Vrijeme" />
-      </button>
-    </div>
-    <div class="vrijeme_desno">
-      <span class="vrijeme_username" id="vrijeme_username">Username</span>
-      <span class="vrijeme_avatar" id="vrijeme_avatar"></span>
+  <!-- Prijava -->
+  <div id="prijava" class="page">
+    <div class="prijava_pozadina">
+      <span class="prijava_logo">GoBeyondFocus</span>
+      <form id="forma_prijava" class="prijava_forma">
+        <h2 class="prijava_naslov">PRIJAVA</h2>
+        <label for="logUsername" class="prijava_oznaka">Korisničko ime</label>
+        <input type="text" id="logUsername" required class="prijava_unos" />
+        <label for="logLozinka" class="prijava_oznaka">Lozinka</label>
+        <input type="password" id="logLozinka" required class="prijava_unos" />
+        <button type="submit" id="btn_prijava" class="prijava_gumb">Prijavi se</button>
+        <div class="prijava_dno">
+          <span>Nemate račun?</span>
+          <a href="#" id="link_registracija" class="prijava_link">Registrirajte se!</a>
+        </div>
+        <p id="greska_prijava" class="poruka_greska"></p>
+      </form>
+      <img class="prijava_luffy" src="https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/1b8702cd0888af976405af03a559e0e9-removebg-preview.png?alt=media&token=23eab6a1-0faa-47ba-b3f8-b5d81a80b9cd" alt="Luffy" />
     </div>
   </div>
-  <div class="vrijeme_pozadina">
-    <div class="vrijeme_kartica">
-      <div class="vrijeme_lik" id="vrijeme_lik"></div>
-      <div class="vrijeme_birani">
-        <span id="vrijeme_prikaz" class="vrijeme_prikaz">00:00</span>
-        <div class="vrijeme_kontrola">
-          <button id="gore_vrijeme" class="vrijeme_btn">&#94;</button>
-          <button id="dolje_vrijeme" class="vrijeme_btn">&#118;</button>
+
+  <!-- Odabir lika -->
+  <div id="odabir" class="page">
+    <div class="odabir_pozadina">
+      <div class="odabir_header">
+        <span class="odabir_logo">GoBeyondFocus</span>
+        <span class="odabir_username" id="odabir_username">Username</span>
+      </div>
+      <h2 class="odabir_naslov">Odaberi svog lika:</h2>
+      <div class="odabir_form">
+        <div class="odabir_kartica kartica_crvena" data-lik="luffy">
+          <img src="https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/luffy_logo.png?alt=media&token=944ae180-b307-453c-b729-31e6aab43b5f" alt="Luffy" class="odabir_slika" />
+        </div>
+        <div class="odabir_kartica kartica_zelena" data-lik="zoro">
+          <img src="https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/zoro_logo.png?alt=media&token=dabeabc4-3c05-4474-9a8c-bbdf8f10b5bc" alt="Zoro" class="odabir_slika" />
+        </div>
+        <div class="odabir_kartica kartica_zuta" data-lik="sanji">
+          <img src="https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/sanji_logo.png?alt=media&token=3363674a-3627-4dc0-8548-fa7acfed94f2" alt="Sanji" class="odabir_slika" />
+        </div>
+        <div class="odabir_kartica kartica_narancasta" data-lik="nami">
+          <img src="https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/nami_logo.png?alt=media&token=606ed272-3d15-4a64-b3c4-bb26fe3da56c" alt="Nami" class="odabir_slika" />
+        </div>
+        <div class="odabir_kartica kartica_roza" data-lik="chopper">
+          <img src="https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/mali_logo.png?alt=media&token=9c5ea1c3-37c2-4a29-afa1-4a583c1fbc86" alt="Chopper" class="odabir_slika" />
+        </div>
+        <div class="odabir_kartica kartica_smeda" data-lik="usop">
+          <img src="https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/usop_logo.png?alt=media&token=968cb119-a991-46f9-afa6-5b796c06b140" alt="Usop" class="odabir_slika" />
         </div>
       </div>
-      <button id="btn_pocni_fokus" class="vrijeme_gumb">Započni fokus</button>
     </div>
   </div>
-</div>
+
+  <!-- Vrijeme stranica -->
+  <div id="vrijeme" class="page">
+    <div class="vrijeme_header">
+      <span class="vrijeme_logo" id="vratime">GoBeyondFocus</span>
+      <span class="koin_iznos" id="koin_iznos"></span>
+      <div class="vrijeme_gumbi">
+        <button id="gumb_outfit" class="header_btn">
+          <img src="https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/image-removebg-preview%20(10).png?alt=media&token=dd5dd52b-2643-4bb2-8120-f597df320385"
+              alt="Outfit" />
+        </button>
+          <button id="gumb_vrijeme" class="header_btn">
+          <img src="https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/buttonpuz.png?alt=media&token=5d88d1c3-4845-46d3-8287-10f31656d9c8"
+              alt="Vrijeme" />
+        </button>
+      </div>
+      <div class="vrijeme_desno">
+        <span class="vrijeme_username" id="vrijeme_username">Username</span>
+        <span class="vrijeme_avatar" id="vrijeme_avatar"></span>
+      </div>
+    </div>
+    <div class="vrijeme_pozadina">
+      <div class="vrijeme_kartica">
+        <div class="vrijeme_lik" id="vrijeme_lik"></div>
+        <div class="vrijeme_birani">
+          <span id="vrijeme_prikaz" class="vrijeme_prikaz">00:00</span>
+          <div class="vrijeme_kontrola">
+            <button id="gore_vrijeme" class="vrijeme_btn">&#94;</button>
+            <button id="dolje_vrijeme" class="vrijeme_btn">&#118;</button>
+          </div>
+        </div>
+        <button id="btn_pocni_fokus" class="vrijeme_gumbic">Započni fokus</button>
+      </div>
+    </div>
+  </div>
 
 
 
 
+  <!-- FOKUS STRANICA -->
 <!-- FOKUS STRANICA -->
 <div id="fokus" class="page">
   <div class="fokus_kartica">
     <div class="fokus_lik"></div>
+    <div id="fokus_sprite" class="sprite"></div> <!-- OVDJE PRIKAZUJEMO SPRITE -->
     <span id="fokus_vrijeme" class="fokus_vrijeme">00:00</span>
   </div>
 </div>
 
 
 
-<!-- Outfit stranica -->
-<!-- Outfit stranica -->
-<div id="outfit" class="page">
-  <div class="outfit_header">
-    <span class="outfit_logo">GoBeyondFocus</span>
-    <span class="koin_iznos" id="koin_iznos_outfit"></span>
-    <div class="outfit_gumbi">
-      <button id="gumb_outfit" class="header_btn">
-        <img src="https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/image-removebg-preview%20(10).png?alt=media&token=dd5dd52b-2643-4bb2-8120-f597df320385"
-             alt="Outfit" />
-      </button>
-      <button id="gumb_vrijeme" class="header_btn">
-        <img src="https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/buttonpuz.png?alt=media&token=5d88d1c3-4845-46d3-8287-10f31656d9c8"
-             alt="Vrijeme" />
-      </button>
+
+  <!-- Outfit stranica -->
+  <!-- Outfit stranica -->
+  <div id="outfit" class="page">
+    <div class="outfit_header">
+      <span class="outfit_logo">GoBeyondFocus</span>
+      <span class="koin_iznos" id="koin_iznos_outfit"></span>
+      <div class="outfit_gumbi">
+        <button id="gumb_outfit_outfit" class="header_btn">
+          <img src="https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/image-removebg-preview%20(10).png?alt=media&token=dd5dd52b-2643-4bb2-8120-f597df320385"
+              alt="Outfit" />
+        </button>
+        <button id="gumb_vrijeme_outfit" class="header_btn">
+          <img src="https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/buttonpuz.png?alt=media&token=5d88d1c3-4845-46d3-8287-10f31656d9c8"
+              alt="Vrijeme" />
+        </button>
+      </div>
+      <div class="outfit_desno">
+        <span class="outfit_username" id="outfit_username">Username</span>
+        <span class="outfit_avatar" id="outfit_avatar"></span>
+      </div>
     </div>
-    <div class="outfit_desno">
-      <span class="outfit_username" id="outfit_username">Username</span>
-      <span class="outfit_avatar" id="outfit_avatar"></span>
+    <div class="outfit_pozadina">
+      <div class="outfit_content_scroll" id="outfit_content_scroll">
+        <h2 style="color:#7499e9;margin-top:12px;">Odaberi outfit!</h2>
+        <div id="outfit_cards_wrapper"></div>
+      </div>
     </div>
   </div>
-  <div class="outfit_pozadina">
-    <div class="outfit_content_scroll" id="outfit_content_scroll">
-      <h2 style="color:#7499e9;margin-top:12px;">Odaberi outfit!</h2>
-      <div id="outfit_cards_wrapper"></div>
-    </div>
-  </div>
-</div>
+
+<!-- stavi da kad se kupi outfit da pise outfit kupljen -->
 
 
 
 
-
-
-<!-- ispravljen id da se slaže sa JS -->
-<span id="greska_registracija" style="color:red"></span>
-<span id="greska_prijava" style="color:red"></span>
+  <!-- ispravljen id da se slaže sa JS -->
+  <span id="greska_registracija" style="color:red"></span>
+  <span id="greska_prijava" style="color:red"></span>
 
 
 
 
-<script src="script.js"></script>
-</body>
-</html>
+  <script src="script.js"></script>
+  </body>
+  </html>
 
 
