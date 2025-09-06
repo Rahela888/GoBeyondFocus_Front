@@ -83,7 +83,7 @@ a {
   
 }
 
-/* Luffy sprite – veći i spušten skroz dolje-desno i malo “odsječen” */
+
 .registracija_luffy {
   position: absolute;
   right: -25px;
@@ -95,7 +95,7 @@ a {
  
 }
 
-/* Forma */
+
 .registracija_forma {
   background: #25375F;
   border-radius: 36px;
@@ -150,7 +150,7 @@ a {
   background: #A3C3DC;
 }
 
-/* Gumb */
+
 .registracija_gumb {
   width: 100%;
   margin: 30px 0 8px 0;
@@ -171,7 +171,7 @@ a {
   color: #25375F;
 }
 
-/* Donji tekst odmah ispod gumba */
+
 .registracija_dno {
   width: 100%;
   font-size: 1.01rem;
@@ -221,7 +221,7 @@ body {
   display: block;
 }
 
-/* Pozadina */
+
 .prijava_pozadina {
   position: relative;
   max-width: 2000px;
@@ -234,7 +234,7 @@ body {
   overflow: hidden;
 }
 
-/* Logo gore skroz lijevo */
+
 .prijava_logo {
   color: #A74449;
   font-family: 'Jacquard 12', serif;
@@ -244,7 +244,7 @@ body {
   top: 25px;
 }
 
-/* Luffy sprite – veći i spušten skroz dolje-desno */
+
 .prijava_luffy {
   position: absolute;
   right: -25px;
@@ -253,7 +253,7 @@ body {
   height: auto;
 }
 
-/* Forma */
+
 .prijava_forma {
   background: #25375F;
   border-radius: 36px;
@@ -270,7 +270,7 @@ body {
   box-shadow: 0 8px 42px rgba(63,68,99,.07);
 }
 
-/* Naslov */
+
 .prijava_naslov {
   font-size: 2.6rem;
   color: #B3975E;
@@ -280,7 +280,7 @@ body {
   margin-bottom: 25px;
 }
 
-/* Oznake */
+
 .prijava_oznaka {
   color: #B3975E;
   font-family: 'Jacquard 12', serif;
@@ -291,7 +291,7 @@ body {
   letter-spacing: 1.2px;
 }
 
-/* Unosi */
+
 .prijava_unos {
   width: 100%;
   padding: 12px 16px;
@@ -308,7 +308,7 @@ body {
 
 
 
-/* Gumb */
+
 .prijava_gumb {
   width: 100%;
   margin: 30px 0 8px 0;
@@ -329,7 +329,7 @@ body {
   color: #25375F;
 }
 
-/* Donji tekst odmah ispod gumba */
+
 .prijava_dno {
   width: 100%;
   font-size: 1.01rem;
@@ -342,7 +342,7 @@ body {
   gap: 5px;
 }
 
-/* Link */
+
 .prijava_link {
   color: #A74449;
   font-family: 'Labrada', serif;
@@ -357,7 +357,7 @@ body {
   border-bottom: 2px solid #A74449;
 }
 
-/* Greska */
+
 .poruka_greska {
   color: #A74449;
   min-height: 24px;
@@ -721,7 +721,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 30px;        /* Dodaj razmak između elemenata */
+  gap: 30px;        
 }
 
 #fokus_sprite {
@@ -744,7 +744,6 @@ border-radius: 10px;
   color: #25375F !important;
   font-size: 100px !important;
 }
-
 
 
 .outfit_cards_grid {
@@ -826,47 +825,48 @@ border-radius: 10px;
 }
 
 
-/* Luffy default sprite */
+
 .sprite.luffy-default {
   width: 200px;
   height: 200px;
-  background-size: 1200px 200px; /* 6 frame-ova × 200px širina */
+  background-size: 1200px 200px; 
 }
 .sprite.usop-default {
   width: 200px;
   height: 200px;
-  background-size: 1200px 200px; /* 6 frame-ova × 200px širina */
+  background-size: 1200px 200px; 
 }
 .sprite.zoro-default {
   width: 200px;
   height: 200px;
-  background-size: 1200px 200px; /* 6 frame-ova × 200px širina */
+  background-size: 1200px 200px; 
 }
 .sprite.nami-default {
   width: 200px;
   height: 200px;
-  background-size: 1200px 200px; /* 6 frame-ova × 200px širina */
+  background-size: 1200px 200px;
 }
 .sprite.sanji-default {
   width: 200px;
   height: 200px;
-  background-size: 1200px 200px; /* 6 frame-ova × 200px širina */
+  background-size: 1200px 200px; 
 }
 .sprite.chopper-default {
   width: 200px;
   height: 200px;
-  background-size: 1200px 200px; /* 6 frame-ova × 200px širina */
+  background-size: 1200px 200px;
 }
 
 /* Dance outfit sprite */
 .sprite-luffy20 {
  width: 195px;
   height: 400px;
-  background-size: 585px 300px; /* 8 frame-ova × 250px širina */
+  background-size: 585px 300px;
 }
 
 .sprite-zoro20 {
  width: 195px;
   height: 400px;
-  background-size: 585px 300px; /* 8 frame-ova × 250px širina */
+  background-size: 585px 300px; 
 }
+
