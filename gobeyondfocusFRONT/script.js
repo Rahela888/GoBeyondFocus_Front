@@ -1,8 +1,8 @@
 console.log('Script učitan');
-
+const API_URL = 'http://localhost:3500';
 window.addEventListener('DOMContentLoaded', () => {
   console.log('DOM spreman');
-  const API_URL = 'http://localhost:3000';
+  
 
   // Provjeri postoje li stranice
   const stranice = document.querySelectorAll('.page');
@@ -32,15 +32,14 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // NAVIGACIJA GUMBOVI
   const gumbOutfit = document.getElementById('gumb_outfit');
-if (gumbOutfit) {
-  gumbOutfit.addEventListener('click', () => {
-    showPage('outfit');
-    prikaziOutfiteZaTrenutnogLika(); // DODAJ
-    prikaziAvatar(); // DODAJ
-    prikaziUsername(); // DODAJ
-  });
-}
-  const gumbOdabir = document.getElementById('gumb_odabir');  
+  if (gumbOutfit) {
+    gumbOutfit.addEventListener('click', () => {
+      showPage('outfit');
+      prikaziOutfiteZaTrenutnogLika();
+      prikaziAvatar();
+      prikaziUsername();
+    });
+  }
 
   const gumbVrijeme = document.getElementById('gumb_vrijeme');
   if (gumbVrijeme) {
@@ -61,7 +60,7 @@ if (gumbOutfit) {
     btnFokus.addEventListener('click', zapocniFokus);
   }
 
-  // REGISTRACIJA FORMA
+  // REGISTRACIJA FORMA - ISPRAVKA BEZ credentials
   const formaRegistracija = document.getElementById('forma_registracija');
   if (formaRegistracija) {
     console.log('Registracija forma pronađena');
@@ -87,9 +86,12 @@ if (gumbOutfit) {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, username, password })
         });
+
         if (!res.ok) throw new Error(await res.text());
         
+        const data = await res.json();
         localStorage.setItem('korisnickoIme', username);
+        localStorage.setItem('korisnikId', data.korisnik.id);
         resetUserData();
         prikaziUsername();
         alert('Registracija uspješna!');
@@ -98,8 +100,6 @@ if (gumbOutfit) {
         document.getElementById('greska_registracija').textContent = err.message || 'Greška pri registraciji';
       }
     });
-  } else {
-    console.error('FORMA REGISTRACIJA NE POSTOJI!');
   }
 
   // LOGIN FORMA
@@ -121,8 +121,6 @@ if (gumbOutfit) {
 
       await login(username, password);
     });
-  } else {
-    console.error('FORMA PRIJAVA NE POSTOJI!');
   }
 
   // KONTROLE VREMENA
@@ -149,7 +147,7 @@ if (gumbOutfit) {
       }
       if (sati > 23) {
         sati = 23;
-        minute = 150;
+        minute = 50;
       }
       azurirajPrikaz();
     });
@@ -161,7 +159,7 @@ if (gumbOutfit) {
       if (minute < 0) {
         if (sati > 0) {
           sati--;
-          minute = 150;
+          minute = 50;
         } else {
           sati = 0;
           minute = 0;
@@ -173,70 +171,64 @@ if (gumbOutfit) {
 
   azurirajPrikaz();
 
-  // ODABIR LIKA
-  // ODABIR LIKA - ISPRAVKA
-document.querySelectorAll('.odabir_kartica').forEach(kartica => {
-  kartica.addEventListener('click', () => {
-    const odabraniLik = kartica.getAttribute('data-lik');
-    console.log('KLIK NA KARTICU!', odabraniLik); // DEBUG
-    
-    if (!odabraniLik || !LIKOVI[odabraniLik]) {
-      console.error('Lik ne postoji:', odabraniLik);
-      return;
-    }
-    
-    // Spremi lokalno ODMAH
-    localStorage.setItem('odabraniLik', odabraniLik);
-    
-    // Ažuriraj userData također
-    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-    userData.selectedCharacter = odabraniLik;
-    localStorage.setItem('userData', JSON.stringify(userData));
-    
-    // Ažuriraj prikaze i idi na vrijeme
-    prikaziOdabranogLika();
-    prikaziAvatar();
-    showPage('vrijeme');
+  // ODABIR LIKA - NOVO BEZ BACKEND POZIVA
+  document.querySelectorAll('.odabir_kartica').forEach(kartica => {
+    kartica.addEventListener('click', async () => {
+      const odabraniLik = kartica.getAttribute('data-lik');
+      console.log('KLIK NA KARTICU!', odabraniLik);
+      
+      if (!odabraniLik || !LIKOVI[odabraniLik]) {
+        console.error('Lik ne postoji:', odabraniLik);
+        return;
+      }
+      
+      const korisnikId = localStorage.getItem('korisnikId');
+      if (korisnikId) {
+        try {
+          await fetch('http://localhost:3500/update-character', {
+            method: 'POST',
+            headers: { 
+              'Content-Type': 'application/json',
+              'user-id': korisnikId
+            },
+            body: JSON.stringify({ selectedCharacter: odabraniLik })
+          });
+        } catch (err) {
+          console.error('Greška backend poziva:', err);
+        }
+      }
+      
+      // LOKALNO SPREMANJE
+      localStorage.setItem('odabraniLik', odabraniLik);
+      const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+      userData.selectedCharacter = odabraniLik;
+      localStorage.setItem('userData', JSON.stringify(userData));
+      
+      prikaziOdabranogLika();
+      prikaziAvatar();
+      showPage('vrijeme');
+    });
   });
-});
 
-
-  // OUTFIT STRANICA INIT
-  if (document.getElementById('outfit_content_scroll')) {
-    prikaziOutfiteZaTrenutnogLika();
-    prikaziAvatar();
-    prikaziUsername();
-    prikaziKovanice(localStorage.getItem('kovanice') || 0);
-  }
-
-  // ========================================
-  // POČETNA LOGIKA - MORA BITI NA KRAJU!
-  // ========================================
+  // POČETNA LOGIKA
   setTimeout(() => {
-    // JEDNOSTAVNO - uvijek počni s registracijom
     showPage('registracija');
     prikaziUsername();
     prikaziOdabranogLika();
     prikaziAvatar();
-}, 100);
+  }, 100);
 
-}); // ← OVDJE SE ZAVRŠAVA DOMContentLoaded
+});
 
 // ========================================
 // FUNKCIJE IZVAN DOMContentLoaded
 // ========================================
 
-// Clear error messages helper
 function clearErrors() {
   const regErr = document.getElementById('greska_registracija');
   const logErr = document.getElementById('greska_prijava');
   if (regErr) regErr.textContent = '';
   if (logErr) logErr.textContent = '';
-}
-
-function getUserSpecificKey(baseKey) {
-  const username = localStorage.getItem('korisnickoIme') || 'defaultUser';
-  return `${username}_${baseKey}`;
 }
 
 function showPage(pageId) {
@@ -249,8 +241,6 @@ function showPage(pageId) {
   if (pageToShow) {
     pageToShow.classList.add('visible');
     console.log('Stranica prikazana:', pageId);
-  } else {
-    console.error('Stranica ne postoji:', pageId);
   }
   
   clearErrors();
@@ -260,45 +250,30 @@ function showPage(pageId) {
 }
 
 function resetUserData() {
-  const username = localStorage.getItem('korisnickoIme');
-  if (!username) return;
-  
-  localStorage.setItem(getUserSpecificKey('kupljeniOutfiti'), JSON.stringify([]));
-  localStorage.setItem(getUserSpecificKey('aktivniOutfit'), 'null');
+  // Resetiraj podatke
 }
 
+// NOVA LOGIN FUNKCIJA
 async function login(username, password) {
-  console.log('Login pokušaj:', username); // DEBUG
-  
   try {
-    const response = await fetch(`${'http://localhost:3000'}/login`, {
+    const response = await fetch('http://localhost:3500/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
       body: JSON.stringify({ username, password })
     });
-    
-    console.log('Response status:', response.status); // DEBUG
-    
+
     if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(errorText || `HTTP ${response.status}`);
+      throw new Error(await response.text());
     }
 
     const data = await response.json();
-    console.log('Login response data:', data); // DEBUG
     
-    if (!data || !data.korisnik) {
-      throw new Error('Neispravni podaci od servera');
-    }
-
-    // Spremi podatke
+    // SPREMI PODATKE
     localStorage.setItem('userData', JSON.stringify(data.korisnik));
     localStorage.setItem('korisnickoIme', data.korisnik.username);
     localStorage.setItem('kovanice', data.korisnik.coins || '0');
     localStorage.setItem('korisnikId', data.korisnik.id);
     
-    // Provjeri ima li odabrani lik
     if (data.korisnik.selectedCharacter) {
       localStorage.setItem('odabraniLik', data.korisnik.selectedCharacter);
       showPage('vrijeme');
@@ -306,134 +281,214 @@ async function login(username, password) {
       showPage('odabir');
     }
     
-    // Ažuriraj UI
     prikaziUsername();
     prikaziOdabranogLika();
     prikaziAvatar();
-    
     alert('Uspješna prijava!');
     
   } catch (err) {
-    console.error('Login greška:', err);
     const errorEl = document.getElementById('greska_prijava');
-    if (errorEl) {
-      errorEl.textContent = err.message;
-    }
+    if (errorEl) errorEl.textContent = err.message;
   }
 }
 
-
-async function logout() {
-  const API_URL = 'http://localhost:3000';
-  const response = await fetch(`${API_URL}/logout`, {
-    method: 'POST',
-    credentials: 'include'
-  });
+// NOVA ZAPOCNI FOKUS FUNKCIJA
+async function zapocniFokus() {
+  const prikaz = document.getElementById('vrijeme_prikaz');
+  const [satStr, minStr] = prikaz.textContent.split(':');
+  const totalMinutes = parseInt(satStr, 10) * 60 + parseInt(minStr, 10);
   
-  if (response.ok) {
-    localStorage.clear();
+  if (totalMinutes <= 0) {
+    alert('Postavite vrijeme fokusa!');
+    return;
+  }
+
+  const korisnikId = localStorage.getItem('korisnikId');
+  if (!korisnikId) {
+    alert('Molimo prijavite se ponovno!');
     showPage('prijava');
+    return;
+  }
+
+  try {
+    // POŠALJI NA BACKEND
+    const response = await fetch(`${API_URL}/start-focus`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'user-id': korisnikId
+      },
+      body: JSON.stringify({ minutes: totalMinutes })
+    });
+
+    if (!response.ok) {
+      const error = await response.text();
+      alert('Greška pokretanja fokusa: ' + error);
+      return;
+    }
+
+    // PRIKAŽI FOKUS STRANICU
+    showPage('fokus');
+    
+    // PRIKAŽI SPRITE ANIMACIJU
+// PRIKAŽI SPRITE ANIMACIJU - KORISTI TRENUTNI OUTFIT
+const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+const odabraniLik = userData.selectedCharacter;
+const ownedOutfits = userData.ownedOutfits || [];
+
+setTimeout(() => {
+  const currentSprite = getCurrentOutfitSprite(odabraniLik);
+  if (currentSprite) {
+    animateSprite(
+      'fokus_sprite', 
+      currentSprite.url,
+      currentSprite.frameWidth,
+      currentSprite.frameHeight,
+      currentSprite.frameCount,
+      currentSprite.frameDuration
+    );
+  }
+}, 100);
+
+    
+    // POKRENI BACKEND TIMER - PRATI STATUS
+    startBackendTimer();
+    
+  } catch (err) {
+    console.error('Greška pokretanja fokusa:', err);
+    alert('Greška pri pokretanju fokusa');
   }
 }
 
-function updateUI(userData) {
-  const usernameElement = document.getElementById('username');
-  if (usernameElement) {
-    usernameElement.textContent = userData.username;
-  }
+
+
+// NOVI TIMER
+function startBackendTimer() {
+  const fokusVrijeme = document.getElementById('fokus_vrijeme');
+  const korisnikId = localStorage.getItem('korisnikId');
   
-  const coinsElement = document.getElementById('coins');
-  if (coinsElement) {
-    coinsElement.textContent = userData.coins;
-  }
-  
-  if (userData.selectedCharacter) {
-    const allCharacters = document.querySelectorAll('.character');
-    allCharacters.forEach(char => char.classList.remove('selected'));
-    
-    const selectedChar = document.getElementById(userData.selectedCharacter);
-    if (selectedChar) {
-      selectedChar.classList.add('selected');
-    }
-    
-    const profileImage = document.getElementById('profile-image');
-    if (profileImage) {
-      profileImage.src = `images/${userData.selectedCharacter}.png`;
-    }
-  }
-  
-  if (userData.ownedOutfits && userData.ownedOutfits.length > 0) {
-    const allOutfits = document.querySelectorAll('.outfit');
-    
-    allOutfits.forEach(outfit => {
-      const outfitName = outfit.dataset.outfitName;
+  // Provjeri status svakih 10 sekundi
+  const statusInterval = setInterval(async () => {
+    try {
+      const response = await fetch(`${API_URL}/focus-status`, {
+        method: 'GET',
+        headers: { 'user-id': korisnikId }
+      });
       
-      if (userData.ownedOutfits.includes(outfitName)) {
-        outfit.classList.add('owned');
-        outfit.classList.remove('locked');
+      if (response.ok) {
+        const data = await response.json();
         
-        const buyButton = outfit.querySelector('.buy-button');
-        if (buyButton) {
-          buyButton.textContent = 'Odaberi';
-          buyButton.onclick = () => selectOutfit(outfitName);
+        if (!data.inFocus || data.remainingMinutes <= 0) {
+          // FOKUS ZAVRŠEN - POZOVI BACKEND
+          clearInterval(statusInterval);
+          await endBackendFocus();
+          return;
         }
-      } else {
-        outfit.classList.add('locked');
-        outfit.classList.remove('owned');
+        
+        // AŽURIRAJ PRIKAZ VREMENA
+        const hours = Math.floor(data.remainingMinutes / 60);
+        const mins = data.remainingMinutes % 60;
+        fokusVrijeme.textContent = `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
+        
+        // Ako je blizu kraja
+        if (data.remainingMinutes <= 0) {
+          fokusVrijeme.style.color = '#00ff00';
+          fokusVrijeme.style.fontWeight = 'bold';
+        }
+      }
+    } catch (err) {
+      console.error('Greška provjere statusa:', err);
+    }
+  }, 10000); // Provjeri svakih 10 sekundi
+}
+
+// ZAVRŠI FOKUS
+async function endBackendFocus() {
+  const korisnikId = localStorage.getItem('korisnikId');
+  
+  try {
+    const response = await fetch(`${API_URL}/end-focus`,  {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'user-id': korisnikId
       }
     });
+
+    if (response.ok) {
+      const data = await response.json();
+      
+      // AŽURIRAJ LOKALNE KOVANICE
+      localStorage.setItem('kovanice', data.totalCoins);
+      
+      // PRIKAŽI REZULTATE
+      alert(`🎉 Fokus završen! 
+⏰ Vrijeme provedeno: ${data.timeSpent} minuta
+💰 Zaradili ste: ${data.coinsEarned} kovanica
+🪙 Ukupno kovanica: ${data.totalCoins}`);
+      
+      // VRATI NA VRIJEME STRANICU
+      showPage('vrijeme');
+      prikaziKovanice(data.totalCoins);
+    } else {
+      console.error('Greška završavanja fokusa');
+      showPage('vrijeme');
+    }
+    
+  } catch (err) {
+    console.error('Greška završavanja fokusa:', err);
+    showPage('vrijeme');
   }
 }
 
-async function refreshUserData() {
-  const API_URL = 'http://localhost:3000';
-  const response = await fetch(`${API_URL}/userdata`, {
-    credentials: 'include'
-  });
-  
-  if (response.ok) {
-    const userData = await response.json();
-    localStorage.setItem('userData', JSON.stringify(userData));
-    localStorage.setItem('kovanice', userData.coins);
-    updateUI(userData);
-  } else {
-    console.error('Greška pri dohvaćanju korisničkih podataka');
-  }
-}
-
-async function selectCharacter(characterName) {
-  const API_URL = 'http://localhost:3000';
-  const response = await fetch(`${API_URL}/update-character`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
-    body: JSON.stringify({ selectedCharacter: characterName })
-  });
-  
-  if (response.ok) {
-    await refreshUserData();
-  }
-}
 
 async function buyOutfit(outfitName, price) {
-  const API_URL = 'http://localhost:3000';
-  const response = await fetch(`${API_URL}/buy-outfit`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
-    body: JSON.stringify({ outfitName, price })
-  });
-  
-  if (response.ok) {
-    const result = await response.json();
-    alert(result.message);
-    await refreshUserData();
-    prikaziOutfiteZaTrenutnogLika();
-  } else {
-    const error = await response.text();
-    alert(error);
+  const korisnikId = localStorage.getItem('korisnikId');
+  if (!korisnikId) {
+    alert('Molimo prijavite se!');
+    return;
+  }
+
+  try {
+    const response = await fetch(`${API_URL}/buy-outfit`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'user-id': korisnikId
+      },
+      body: JSON.stringify({ outfitName, price })
+    });
+    
+    if (response.ok) {
+      const result = await response.json();
+      
+      // AŽURIRAJ LOKALNE PODATKE
+      localStorage.setItem('kovanice', result.coins);
+      
+      // AŽURIRAJ userData S NOVIM OUTFITIMA
+      const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+      if (!userData.ownedOutfits.includes(outfitName)) {
+        userData.ownedOutfits.push(outfitName);
+        localStorage.setItem('userData', JSON.stringify(userData));
+      }
+      
+      alert(result.message);
+      
+      // OSVJEŽI PRIKAZ
+      prikaziOutfiteZaTrenutnogLika();
+      prikaziKovanice(result.coins);
+      
+    } else {
+      const error = await response.text();
+      alert('Greška: ' + error);
+    }
+  } catch (err) {
+    console.error('Greška kupovine:', err);
+    alert('Greška pri kupovini outfita');
   }
 }
+
+
 
 function prikaziOutfiteZaTrenutnogLika() {
   const wrapper = document.getElementById('outfit_cards_wrapper');
@@ -443,9 +498,7 @@ function prikaziOutfiteZaTrenutnogLika() {
   const userData = JSON.parse(localStorage.getItem('userData') || '{}');
   const odabraniLik = userData.selectedCharacter;
   const ownedOutfits = userData.ownedOutfits || [];
-  
-  console.log('Selected character from backend:', odabraniLik);
-  console.log('Owned outfits from backend:', ownedOutfits);
+  const equippedOutfit = localStorage.getItem('equippedOutfit') || 'default';
   
   if (!odabraniLik) {
     showPage('odabir');
@@ -453,36 +506,44 @@ function prikaziOutfiteZaTrenutnogLika() {
   }
   
   const outfitiZaLik = OUTFITI[odabraniLik] || [];
-  
   const grid = document.createElement('div');
   grid.className = 'outfit_cards_grid';
 
   outfitiZaLik.forEach((outfit, idx) => {
     const card = document.createElement('div');
     card.className = 'outfit_card';
+    
+    const kupljen = ownedOutfits.includes(outfit.ime);
+    const nosen = equippedOutfit === outfit.ime;
+    
     card.innerHTML = `                        
       <img src="${outfit.slika}" alt="Outfit ${idx + 1}">
       <span class="outfit_card_name">${outfit.ime}</span>
       <div class="outfit_card_price">${outfit.cijena} <img src="https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/kovanice.png?alt=media&token=5336525d-db0a-416c-8764-2af36f79ec15" style="width:18px;height:18px; vertical-align:middle;"> </div>
-      <button class="outfit_card_btn">Kupi outfit</button>
+      ${!kupljen ? '<button class="outfit_card_btn">Kupi outfit</button>' : ''}
+      ${kupljen && !nosen ? '<button class="equip_outfit_btn">Nosi outfit</button>' : ''}
+      ${nosen ? '<span class="nosen-label" style="color: gold; font-weight: bold;">Nosite ga!!</span>' : ''}
+      ${kupljen && !nosen ? '<span class="kupljeno-label" style="color: green; font-weight: bold;">Kupljeno</span>' : ''}
     `;
 
-    const kupljen = ownedOutfits.includes(outfit.ime);
+    // Event listeneri
+    if (!kupljen) {
+      const buyBtn = card.querySelector('.outfit_card_btn');
+      if (buyBtn) {
+        buyBtn.addEventListener('click', async () => {
+          await buyOutfit(outfit.ime, outfit.cijena);
+        });
+      }
+    }
     
-    if (kupljen) {
-      const btn = card.querySelector('.outfit_card_btn');
-      if (btn) btn.style.display = 'none';
-
-      const kupljenoLabel = document.createElement('span');
-      kupljenoLabel.className = 'kupljeno-label';
-      kupljenoLabel.textContent = 'Kupljeno';
-      kupljenoLabel.style.color = 'green';
-      kupljenoLabel.style.fontWeight = 'bold';
-      card.appendChild(kupljenoLabel);
-    } else {
-      card.querySelector('.outfit_card_btn').addEventListener('click', async () => {
-        await buyOutfit(outfit.ime, outfit.cijena);
-      });
+    if (kupljen && !nosen) {
+      const equipBtn = card.querySelector('.equip_outfit_btn');
+      if (equipBtn) {
+        equipBtn.addEventListener('click', () => {
+          localStorage.setItem('equippedOutfit', outfit.ime);
+          prikaziOutfiteZaTrenutnogLika(); // Refresh prikaz
+        });
+      }
     }
 
     grid.appendChild(card);
@@ -490,6 +551,28 @@ function prikaziOutfiteZaTrenutnogLika() {
 
   wrapper.appendChild(grid);
 }
+
+function getCurrentOutfitSprite(character, ownedOutfits) {
+  const equippedOutfit = localStorage.getItem('equippedOutfit');
+  
+  // Ako je default ili nema opremljen outfit
+  if (!equippedOutfit || equippedOutfit === 'default') {
+    return LIKOVI[character]?.defaultSprite;
+  }
+  
+  // Provjeri da li korisnik posjeduje taj outfit
+  if (ownedOutfits && !ownedOutfits.includes(equippedOutfit)) {
+    return LIKOVI[character]?.defaultSprite;
+  }
+  
+  // Pronađi sprite za opremljen outfit
+  const characterOutfits = OUTFITI[character] || [];
+  const outfit = characterOutfits.find(o => o.ime === equippedOutfit);
+  
+  return outfit?.sprite || LIKOVI[character]?.defaultSprite;
+}
+
+
 
 function prikaziOdabranogLika() {
   const userData = JSON.parse(localStorage.getItem('userData') || '{}');
@@ -506,6 +589,7 @@ function prikaziOdabranogLika() {
 function prikaziAvatar() {
   const userData = JSON.parse(localStorage.getItem('userData') || '{}');
   const odabraniLik = userData.selectedCharacter; 
+  
   const avatarEl = document.getElementById('vrijeme_avatar');
   if (LIKOVI[odabraniLik] && avatarEl) {
     avatarEl.style.backgroundColor = LIKOVI[odabraniLik].boja;
@@ -513,9 +597,6 @@ function prikaziAvatar() {
     avatarEl.style.backgroundSize = "cover";
     avatarEl.style.backgroundPosition = "center";
     avatarEl.style.backgroundRepeat = "no-repeat";
-  } else if (avatarEl) {
-    avatarEl.style.background = "transparent";
-    avatarEl.style.backgroundImage = "none";
   }
 
   const outfitAvatarEl = document.getElementById('outfit_avatar');
@@ -525,9 +606,6 @@ function prikaziAvatar() {
     outfitAvatarEl.style.backgroundSize = "cover";
     outfitAvatarEl.style.backgroundPosition = "center";
     outfitAvatarEl.style.backgroundRepeat = "no-repeat";
-  } else if (outfitAvatarEl) {
-    outfitAvatarEl.style.background = "transparent";
-    outfitAvatarEl.style.backgroundImage = "none";
   }
 }
 
@@ -546,104 +624,7 @@ function prikaziKovanice(kolicina) {
   });
 }
 
-function postaviUsername(novoIme) {
-  localStorage.setItem('korisnickoIme', novoIme);
-  prikaziUsername();
-}
-
-// FUNKCIJA zapocniFokus i sve ostale funkcije koje već imaš...
-function zapocniFokus() {
-  const prikaz = document.getElementById('vrijeme_prikaz');
-  if (!prikaz) return;
-  const [satStr, minStr] = prikaz.textContent.split(':');
-  let totalSec = parseInt(satStr, 10) * 3600 + parseInt(minStr, 10) * 60;
-  if (totalSec <= 0) return;
-
-  const fokusSprite = document.getElementById('fokus_sprite');
-  if (fokusSprite) fokusSprite.style.backgroundImage = 'none';
-
-  const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-  let odabraniLik = userData.selectedCharacter;
-
-  if (!odabraniLik) {
-    alert('Moraš odabrati lik prvo!');
-    showPage('odabir');
-    return;
-  }
-
-  console.log('Odabrani lik u fokus:', odabraniLik);
-
-  if (!LIKOVI[odabraniLik]) {
-    console.log('Lik ne postoji u LIKOVI objektu:', odabraniLik);
-    showPage('odabir');
-    return;
-  }
-
-  let spriteURL, frameWidth, frameHeight, frameCount, frameDuration;
-  
-  let aktivniOutfit = null;
-
-  if (aktivniOutfit && aktivniOutfit.sprite) {
-    spriteURL = aktivniOutfit.sprite.url;
-    frameWidth = aktivniOutfit.sprite.frameWidth;
-    frameHeight = aktivniOutfit.sprite.frameHeight;
-    frameCount = aktivniOutfit.sprite.frameCount;
-    frameDuration = 150;
-
-    const el = document.getElementById('fokus_sprite');
-    el.className = 'sprite ' + aktivniOutfit.sprite.cssClass;
-  } else {
-    const lik = LIKOVI[odabraniLik];
-    if (lik && lik.defaultSprite) {
-      spriteURL = lik.defaultSprite.url;
-      frameWidth = lik.defaultSprite.frameWidth;
-      frameHeight = lik.defaultSprite.frameHeight;
-      frameCount = lik.defaultSprite.frameCount;
-      frameDuration = 150;
-    } else {
-      console.log('Default sprite ne postoji za lik:', odabraniLik);
-      return;
-    }
-  }
-
-  console.log('Sprite URL:', spriteURL);
-
-  setTimeout(() => {
-    animateSprite('fokus_sprite', spriteURL, frameWidth, frameHeight, frameCount, frameDuration);
-  }, 100);
-
-  localStorage.setItem('zadnje_fokus_vrijeme', prikaz.textContent);
-  showPage('fokus');
-
-  const fokusVrijeme = document.getElementById('fokus_vrijeme');
-  if (fokusVrijeme) fokusVrijeme.textContent = prikaz.textContent;
-
-  let preostalo = totalSec;
-  const interval = setInterval(() => {
-    preostalo -= 60;
-    if (preostalo <= 0) {
-      fokusVrijeme.textContent = '00:00';
-      clearInterval(interval);
-      zavrsiFokus(totalSec);
-      return;
-    }
-    const minTotal = Math.floor(preostalo / 60);
-    const satiF = Math.floor(minTotal / 60);
-    const minF = minTotal % 60;
-    fokusVrijeme.textContent = `${String(satiF).padStart(2, '0')}:${String(minF).padStart(2, '0')}`;
-  }, 60000);
-
-  const minTotal = Math.floor((preostalo - 60) / 60);
-  const satiF = Math.floor(minTotal / 60);
-  const minF = minTotal % 60;
-  setTimeout(() => {
-    if (fokusVrijeme) fokusVrijeme.textContent = `${String(satiF).padStart(2, '0')}:${String(minF).padStart(2, '0')}`;
-  }, 1);
-}
-
 function animateSprite(elementId, spriteURL, frameWidth, frameHeight, frameCount, frameDuration) {
-  console.log('animateSprite pozvan s frameDuration:', frameDuration);
-  
   const el = document.getElementById(elementId);
   if (!el) return;
 
@@ -661,64 +642,9 @@ function animateSprite(elementId, spriteURL, frameWidth, frameHeight, frameCount
       const xPos = -frame * frameWidth;
       el.style.backgroundPosition = `${xPos}px 0px`;
       frame = (frame + 1) % frameCount;
-      console.log('Frame:', frame, 'Interval:', frameDuration);
     }, frameDuration);
   }, 10);
 }
-
-async function zavrsiFokus(totalSec) {
-  const API_URL = 'http://localhost:3000';
-  const dodatnihKovanica = Math.floor(totalSec / (30 * 60)) * 5;
-  const korisnikId = localStorage.getItem('korisnikId');
-  if (korisnikId) {
-    try {
-      const res = await fetch(`${API_URL}/update-coins`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ korisnikId, coins: dodatnihKovanica })
-      });
-      const data = await res.json();
-      localStorage.setItem('kovanice', data.coins);
-      prikaziKovanice(data.coins);
-    } catch (e) {
-      alert('Greška pri spremanju kovanica!');
-    }
-  }
-  showPage('vrijeme');
-}
-
-function selectOutfit(outfitName) {
-  console.log('Odabran outfit:', outfitName);
-}
-
-function updateFokusSpriteAnimation() {
-  const fokusSprite = document.getElementById('fokus_sprite');
-  if (!fokusSprite) return;
-
-  const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-  const odabraniLik = userData.selectedCharacter;
-  const aktivniOutfit = null;
-
-  let spriteURL;
-  let cssClass;
-
-  if (aktivniOutfit && aktivniOutfit.sprite) {
-    spriteURL = aktivniOutfit.sprite.url;
-    cssClass = aktivniOutfit.sprite.cssClass;
-  } else {
-    if (LIKOVI[odabraniLik] && LIKOVI[odabraniLik].defaultSprite) {
-      spriteURL = LIKOVI[odabraniLik].defaultSprite.url;
-      cssClass = LIKOVI[odabraniLik].defaultSprite.cssClass;
-    }
-  }
-
-  if (spriteURL) {
-    fokusSprite.style.backgroundImage = `url(${spriteURL})`;
-    fokusSprite.className = 'sprite ' + cssClass;
-  }
-}
-
-
 
 // Podaci o likovima
 const LIKOVI = {
@@ -737,7 +663,7 @@ const LIKOVI = {
   },
   zoro: {
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/zoro_logo.png?alt=media&token=dabeabc4-3c05-4474-9a8c-bbdf8f10b5bc",
-    pfp: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/lufi_pfp.png?alt=media&token=e07d330e-66ad-4556-9399-f68318e23cf8",
+    pfp: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/zoro_pfp.png?alt=media&token=c5b9b845-6dc1-486d-bd08-83c66b4ba306",
     boja: "#599970",
      defaultSprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/pocetnizorosprite.png?alt=media&token=afcd452e-fa36-41e5-963a-ed24003ecc8e",
@@ -834,7 +760,7 @@ frameWidth: 195,      // Nova širina
 {
     ime: "Boxing Champion",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/luffyboks.png?alt=media&token=16717286-7e69-4c9a-80c7-82bd136088f3",
-    cijena: 20,
+    cijena: 45,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/spritemali45.png?alt=media&token=d465d492-9f6a-4dba-9f6c-83d3f6c01f0e",
       frameWidth: 193,      // Nova širina
@@ -847,7 +773,7 @@ frameWidth: 195,      // Nova širina
 {
     ime: "Wano kimono",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/luffykina.png?alt=media&token=338d34be-b8ac-4da3-8764-dc392d0d9d59",
-    cijena: 20,
+    cijena: 60,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/spriteluffy60.png?alt=media&token=e6420f57-2dda-44ac-9e46-00e07757a09f",
     frameWidth: 196,      // Nova širina
@@ -860,7 +786,7 @@ frameWidth: 195,      // Nova širina
 {
     ime: "Haloween",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/lufyhello.png?alt=media&token=031c0f09-fea9-486e-9198-638564d2fda7",
-    cijena: 20,
+    cijena: 80,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/spriteluffy80.png?alt=media&token=ac756410-14ef-4d07-b85d-026cee2c6302",
     frameWidth: 144,      // Nova širina
@@ -873,7 +799,7 @@ frameWidth: 195,      // Nova širina
 {
     ime: "Fire",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/luffyvatra.png?alt=media&token=cf14900d-6a5a-4191-8d7e-e7140dac0530",
-    cijena: 20,
+    cijena: 100,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/spriteluffy100.png?alt=media&token=c151c915-79ed-4f84-bca7-fc8f933dac91",
       frameWidth: 273,      // Nova širina
@@ -915,7 +841,7 @@ frameWidth: 255,      // Nova širina
 {
     ime: "Googles fighter",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/zoro45.png?alt=media&token=afcccc55-46e3-4367-8ad9-27d723c82ce3",
-    cijena: 20,
+    cijena: 45,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/zorosprite45.png?alt=media&token=c9c7016d-504a-4d79-8dfa-f04b3d0e0d74",
    frameWidth: 338,      // Nova širina
@@ -928,7 +854,7 @@ frameWidth: 255,      // Nova širina
 {
     ime: "Samurai",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/zoro60.png?alt=media&token=3df7999d-bade-467f-bda4-adc191c77be5",
-    cijena: 20,
+    cijena: 60,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/zorosprite60.png?alt=media&token=ed3b3e84-408a-4fca-be90-85f0769a080a",
    frameWidth: 225,      // Nova širina
@@ -941,7 +867,7 @@ frameWidth: 255,      // Nova širina
 {
     ime: "Black suit",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/zoro80.png?alt=media&token=f29bb6b4-1bcc-4625-a2ca-d71688725722",
-    cijena: 20,
+    cijena: 80,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/zorosprite80.png?alt=media&token=40b78828-4109-42b4-b77d-7dd307e6b66c",
     frameWidth: 244,      // Nova širina
@@ -954,7 +880,7 @@ frameWidth: 255,      // Nova širina
 {
     ime: "Bandaged warrior",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/zoro100.png?alt=media&token=6bc21d64-7f25-450a-a4b9-cb4ecf27bf4c",
-    cijena: 20,
+    cijena: 100,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/zorosprite100.png?alt=media&token=8af73b27-ce20-4c17-a1cc-db2d677cef4a",
      frameWidth: 244,      // Nova širina
@@ -995,7 +921,7 @@ frameWidth: 255,      // Nova širina
 {
     ime: "Yukata Casual",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/sanji45.png?alt=media&token=9a8aa5f1-3861-473b-aa8e-78877f0dbf71",
-    cijena: 20,
+    cijena: 45,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/sanjisprite45.png?alt=media&token=2cb7113c-073e-45b2-a52a-b1c5cc8a4f82",
     frameWidth: 195,      // Nova širina
@@ -1008,7 +934,7 @@ frameWidth: 255,      // Nova širina
 {
     ime: "Haloewwn pumpkin",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/sanji60.png?alt=media&token=8415eb9d-adc2-42bb-aca2-f709318f1344",
-    cijena: 20,
+    cijena: 60,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/sanjisprite60.png?alt=media&token=a86d7b45-ebde-47ac-b04c-d783aa46fb7a",
     frameWidth: 158,      // Nova širina
@@ -1021,7 +947,7 @@ frameWidth: 255,      // Nova širina
 {
     ime: "Black Suit",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/sanji80.png?alt=media&token=42b207b0-dd9a-4c4a-b01c-e8ec55f9b91a",
-    cijena: 20,
+    cijena: 80,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/sanjisprite80.png?alt=media&token=f543bee9-b8b0-4ad3-896e-23bb871d3ddc",
     frameWidth: 228,      // Nova širina
@@ -1034,7 +960,7 @@ frameWidth: 255,      // Nova širina
 {
     ime: "White dress",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/sanji100.png?alt=media&token=09648153-a1eb-4550-8338-faffd3191339",
-    cijena: 20,
+    cijena: 100,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/sanjisprite100.png?alt=media&token=75b3a181-6952-4809-b650-08d77cc16f9c",
     frameWidth: 163,      // Nova širina
@@ -1076,7 +1002,7 @@ frameWidth: 128,      // Nova širina
 {
     ime: "Athlete gear",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/nami45.png?alt=media&token=119b66e1-9509-4f2b-8b4e-728e392bd794",
-    cijena: 20,
+    cijena: 45,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/namisprite45.png?alt=media&token=e4ca6310-7391-4f68-853b-524297fbcb2a",
 frameWidth: 183,      // Nova širina
@@ -1089,7 +1015,7 @@ frameWidth: 183,      // Nova širina
 {
     ime: "Wrench mechanic",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/nami60.png?alt=media&token=4cad84cd-4364-47e6-a055-6e9249b3e18a",
-    cijena: 20,
+    cijena: 60,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/namisprite60.png?alt=media&token=58419812-37fc-4eca-a68f-ac869bd26ed2",
     frameWidth: 252,      // Nova širina
@@ -1102,7 +1028,7 @@ frameWidth: 183,      // Nova širina
 {
     ime: "Pirate queen",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/nami80.png?alt=media&token=840e983b-a5de-4866-9f6f-24bc61518b14",
-    cijena: 20,
+    cijena: 80,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/namisprite80.png?alt=media&token=e729b1ca-d380-4c83-9b8d-d08ea942a5c4",
      frameWidth: 200,      // Nova širina
@@ -1115,7 +1041,7 @@ frameWidth: 183,      // Nova širina
 {
     ime: "Elegant dress",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/nami100.png?alt=media&token=9c17b5b2-1ba1-4fdc-aaaf-181ac14342e9",
-    cijena: 20,
+    cijena: 100,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/namisprite100.png?alt=media&token=cb1d707e-8566-4ef8-a345-757c571cb622",
   frameWidth: 201,      // Nova širina
@@ -1157,7 +1083,7 @@ chopper: [
 {
     ime: "Forest Guardian",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/mali45.png?alt=media&token=766bb9ba-a8a4-44dd-b283-853b48ed3a7f",
-    cijena: 20,
+    cijena: 45,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/spritemali45.png?alt=media&token=d465d492-9f6a-4dba-9f6c-83d3f6c01f0e",
      frameWidth: 245,      // Nova širina
@@ -1170,7 +1096,7 @@ chopper: [
 {
     ime: "Strong deer",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/mali60.png?alt=media&token=2124b712-7dd8-493b-982d-b957f57703aa",
-    cijena: 20,
+    cijena: 60,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/spritemali60.png?alt=media&token=2e07a203-06f8-41ae-8688-822122d3e5d7",
     frameWidth: 188,      // Nova širina
@@ -1183,7 +1109,7 @@ chopper: [
 {
     ime: "Halloween deer",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/mali80.png?alt=media&token=b45b19c4-dc29-49e5-9ffa-f8f035b73c15",
-    cijena: 20,
+    cijena: 80,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/spritemali80.png?alt=media&token=0a5fdca5-0a8b-4827-a3d0-50b567998010",
     frameWidth: 126,      // Nova širina
@@ -1196,7 +1122,7 @@ chopper: [
 {
     ime: "Big strong deer",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/mali100.png?alt=media&token=7f774873-4229-4b16-b206-e4b2f735d1fe",
-    cijena: 20,
+    cijena: 100,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/spritemali100.png?alt=media&token=570d6745-64ca-43c7-b839-472618815add",
    frameWidth: 236,      // Nova širina
@@ -1238,7 +1164,7 @@ usop: [
 {
     ime: "pirate mask",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/usop45.png?alt=media&token=1f01d079-575d-4e87-9701-17beda3b8266",
-    cijena: 20,
+    cijena: 45,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/spriteusop45.png?alt=media&token=40671755-fbf4-4d08-9123-064b0d88ca4a",
     frameWidth: 368,      // Nova širina
@@ -1251,7 +1177,7 @@ usop: [
 {
     ime: "Red samurai",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/usop60.png?alt=media&token=9dca821b-174f-40d4-93f5-4afb0686470d",
-    cijena: 20,
+    cijena: 60,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/spriteusop60.png?alt=media&token=8cee6cec-736c-4315-89e2-c541269a178e",
    frameWidth: 260,      // Nova širina
@@ -1264,7 +1190,7 @@ usop: [
 {
     ime: "Haloween ghost",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/usop80.png?alt=media&token=3ec84be8-1991-43e2-af24-1c8c311631da",
-    cijena: 20,
+    cijena: 80,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/spriteusop80.png?alt=media&token=c0636ea2-7c2d-4f10-8317-d4cbe51dd7c3",
       frameWidth: 169,      // Nova širina
@@ -1277,7 +1203,7 @@ usop: [
 {
     ime: "Knight helmet",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/usop100.png?alt=media&token=e501c334-5aef-413a-aa9a-9aaaba24d399",
-    cijena: 20,
+    cijena: 100,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/spriteusop100.png?alt=media&token=ea2f8389-5600-4e61-955b-a27e8386a06c",
   frameWidth: 347,      // Nova širina
