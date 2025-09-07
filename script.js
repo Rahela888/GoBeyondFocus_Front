@@ -1,6 +1,6 @@
 
 window.addEventListener('DOMContentLoaded', () => {
-  const API_URL = 'https://gobeyondfocus-back-2.onrender.com/';
+  const API_URL = 'https://gobeyondfocus-back-2.onrender.com';
 
 
 const linkRegistracija = document.getElementById('link_registracija');
@@ -214,7 +214,7 @@ function getUserSpecificKey(baseKey) {
   return `${username}_${baseKey}`;
 }
 
-const API_URL = 'http://localhost:3000'; 
+const API_URL = 'https://gobeyondfocus-back-2.onrender.com'; 
 
 function clearErrors() {
   const regErr = document.getElementById('greska_registracija');
@@ -317,7 +317,7 @@ function animateSprite(elementId, spriteURL, frameWidth, frameHeight, frameCount
   const el = document.getElementById(elementId);
   if (!el) return;
 
-  // 🔥 AGRESIVNO CLEAR SVE POSTOJEĆE INTERVALE
+ 
   if (el._spriteInterval) {
     clearInterval(el._spriteInterval);
     el._spriteInterval = null;
@@ -329,7 +329,7 @@ function animateSprite(elementId, spriteURL, frameWidth, frameHeight, frameCount
     
     let frame = 0;
     
-    // 🔥 NOVI INTERVAL S BOLJIM TIMING-OM
+ 
     el._spriteInterval = setInterval(() => {
       const xPos = -frame * frameWidth;
       el.style.backgroundPosition = `${xPos}px 0px`;
@@ -1312,4 +1312,5 @@ prikaziOdabranogLika();
 prikaziAvatar();
 
 prikaziKovanice(localStorage.getItem('kovanice') || 0);
+
 
