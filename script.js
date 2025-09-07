@@ -1,303 +1,4 @@
-window.addEventListener('DOMContentLoaded', () => {
-  
-  // Prikaži registraciju kao početnu stranicu
-  showPage('registracija');
 
-  // FAKE Login/Register linkovi (samo za navigaciju)
-  document.getElementById('link_registracija')?.addEventListener('click', e => {
-    e.preventDefault();
-    showPage('registracija');
-  });
-
-  document.getElementById('link_login')?.addEventListener('click', e => {
-    e.preventDefault();
-    showPage('prijava');
-  });
-
-  // FAKE REGISTRACIJA - samo ide na odabir
-  document.getElementById('forma_registracija').addEventListener('submit', e => {
-    e.preventDefault();
-    alert('Registracija uspješna!');
-    showPage('odabir');
-  });
-
-  // FAKE PRIJAVA - samo ide na odabir  
-  document.getElementById('forma_prijava').addEventListener('submit', e => {
-    e.preventDefault();
-    alert('Prijava uspješna!');
-    showPage('odabir');
-  });
-
-  // ODABIR LIKA - sprema direktno bez korisnika
-  document.querySelectorAll('.odabir_kartica').forEach(kartica => {
-    kartica.addEventListener('click', () => {
-      const odabraniLik = kartica.getAttribute('data-lik');
-      console.log('Odabran lik:', odabraniLik);
-      
-      localStorage.setItem('odabraniLik', odabraniLik);
-      prikaziOdabranogLika();
-      prikaziAvatar();
-      showPage('vrijeme');
-    });
-  });
-
-  // OUTFIT i VRIJEME gumbovi
-  document.getElementById('gumb_outfit')?.addEventListener('click', () => {
-    showPage('outfit');
-    prikaziOutfiteZaTrenutnogLika();
-  });
-
-  document.getElementById('gumb_vrijeme')?.addEventListener('click', () => {
-    showPage('vrijeme');
-  });
-
-  document.getElementById('gumb_vrijeme_outfit')?.addEventListener('click', () => {
-    showPage('vrijeme');
-  });
-
-  // FOKUS SYSTEM
-  document.getElementById('btn_pocni_fokus')?.addEventListener('click', zapocniFokus);
-
-  // VRIJEME KONTROLE
-  let sati = 0;
-  let minute = 0;
-
-  function azurirajPrikaz() {
-    const prikaz = document.getElementById('vrijeme_prikaz');
-    if (!prikaz) return;
-    const satStr = sati.toString().padStart(2, '0');
-    const minStr = minute.toString().padStart(2, '0');
-    prikaz.textContent = `${satStr}:${minStr}`;
-  }
-
-  document.getElementById('gore_vrijeme')?.addEventListener('click', () => {
-    minute += 10;
-    if (minute >= 60) {
-      minute = 0;
-      sati++;
-    }
-    if (sati > 23) {
-      sati = 23;
-      minute = 50;
-    }
-    azurirajPrikaz();
-  });
-
-  document.getElementById('dolje_vrijeme')?.addEventListener('click', () => {
-    minute -= 10;
-    if (minute < 0) {
-      if (sati > 0) {
-        sati--;
-        minute = 50;
-      } else {
-        sati = 0;
-        minute = 0;
-      }
-    }
-    azurirajPrikaz();
-  });
-
-  azurirajPrikaz();
-
-  // Inicijalne funkcije
-  prikaziUsername();
-  prikaziOdabranogLika();
-  prikaziAvatar();
-  prikaziKovanice(localStorage.getItem('kovanice') || 0);
-});
-
-// === GLAVNE FUNKCIJE ===
-
-function showPage(pageId) {
-  document.querySelectorAll('.page').forEach(el => el.classList.remove('visible'));
-  const pageToShow = document.getElementById(pageId);
-  if (pageToShow) pageToShow.classList.add('visible');
-  prikaziKovanice(localStorage.getItem('kovanice') || 0);
-}
-
-// OUTFIT FUNKCIJA - ISPRAVLJENA
-
-
-// FOKUS FUNKCIJA - S SPRITE ANIMACIJOM
-function zapocniFokus() {
-  const prikaz = document.getElementById('vrijeme_prikaz');
-  if (!prikaz) return;
-  
-  const [satStr, minStr] = prikaz.textContent.split(':');
-  let totalSec = parseInt(satStr, 10) * 3600 + parseInt(minStr, 10) * 60;
-  if (totalSec <= 0) return;
-
-  const odabraniLik = localStorage.getItem('odabraniLik');
-  if (!odabraniLik) {
-    alert('Moraš odabrati lik prvo!');
-    showPage('odabir');
-    return;
-  }
-
-  // SPRITE LOGIKA ZA FOKUS
-  const fokusSprite = document.getElementById('fokus_sprite');
-  if (fokusSprite) fokusSprite.style.backgroundImage = 'none';
-
-  let spriteURL, frameWidth, frameHeight, frameCount, frameDuration;
-  let aktivniOutfit = JSON.parse(localStorage.getItem('aktivniOutfit') || 'null');
-
-  if (aktivniOutfit && aktivniOutfit.sprite) {
-    spriteURL = aktivniOutfit.sprite.url;
-    frameWidth = aktivniOutfit.sprite.frameWidth;
-    frameHeight = aktivniOutfit.sprite.frameHeight;
-    frameCount = aktivniOutfit.sprite.frameCount;
-    frameDuration = 150;
-
-    const el = document.getElementById('fokus_sprite');
-    if (el) el.className = 'sprite ' + aktivniOutfit.sprite.cssClass;
-  } else {
-    // Koristi default sprite za odabranog lika
-    const lik = LIKOVI[odabraniLik];
-    if (lik && lik.defaultSprite) {
-      spriteURL = lik.defaultSprite.url;
-      frameWidth = lik.defaultSprite.frameWidth;
-      frameHeight = lik.defaultSprite.frameHeight;
-      frameCount = lik.defaultSprite.frameCount;
-      frameDuration = 150;
-    }
-  }
-
-  if (spriteURL) {
-    setTimeout(() => {
-      animateSprite('fokus_sprite', spriteURL, frameWidth, frameHeight, frameCount, frameDuration);
-    }, 100);
-  }
-
-  showPage('fokus');
-
-  const fokusVrijeme = document.getElementById('fokus_vrijeme');
-  if (fokusVrijeme) fokusVrijeme.textContent = prikaz.textContent;
-
-  let preostalo = totalSec;
-  const interval = setInterval(() => {
-    preostalo -= 60;
-    if (preostalo <= 0) {
-      fokusVrijeme.textContent = '00:00';
-      clearInterval(interval);
-      zavrsiFokus(totalSec);
-      return;
-    }
-    const minTotal = Math.floor(preostalo / 60);
-    const satiF = Math.floor(minTotal / 60);
-    const minF = minTotal % 60;
-    fokusVrijeme.textContent = `${String(satiF).padStart(2, '0')}:${String(minF).padStart(2, '0')}`;
-  }, 60000);
-}
-
-// SPRITE ANIMACIJA FUNKCIJA
-function animateSprite(elementId, spriteURL, frameWidth, frameHeight, frameCount, frameDuration) {
-  const el = document.getElementById(elementId);
-  if (!el) return;
-
-  if (el._spriteInterval) {
-    clearInterval(el._spriteInterval);
-    el._spriteInterval = null;
-  }
-  
-  setTimeout(() => {
-    el.style.backgroundImage = `url(${spriteURL})`;
-    
-    let frame = 0;
-    el._spriteInterval = setInterval(() => {
-      const xPos = -frame * frameWidth;
-      el.style.backgroundPosition = `${xPos}px 0px`;
-      frame = (frame + 1) % frameCount;
-    }, frameDuration);
-  }, 10);
-}
-
-function zavrsiFokus(totalSec) {
-  const dodatnihKovanica = Math.floor(totalSec / (30 * 60)) * 5;
-  const trenutneKovanice = parseInt(localStorage.getItem('kovanice') || '0', 10);
-  const noveKovanice = trenutneKovanice + dodatnihKovanica;
-  
-  localStorage.setItem('kovanice', noveKovanice);
-  prikaziKovanice(noveKovanice);
-  
-  alert(`Fokus završen! Zaradio si ${dodatnihKovanica} kovanica!`);
-  showPage('vrijeme');
-}
-
-function prikaziOdabranogLika() {
-  const odabraniLik = localStorage.getItem('odabraniLik');
-  const element = document.getElementById('vrijeme_lik');
-  if (LIKOVI[odabraniLik] && element) {
-    element.innerHTML = `<img src="${LIKOVI[odabraniLik].slika}" alt="${odabraniLik}" style="width:95px; height:95px; border-radius: 10px;">`;
-  } else if (element) {
-    element.innerHTML = '';
-  }
-}
-
-function prikaziAvatar() {
-  const odabraniLik = localStorage.getItem('odabraniLik');
-  
-  ['vrijeme_avatar', 'outfit_avatar'].forEach(id => {
-    const avatarEl = document.getElementById(id);  
-    if (LIKOVI[odabraniLik] && avatarEl) {
-      avatarEl.style.backgroundColor = LIKOVI[odabraniLik].boja;
-      avatarEl.style.backgroundImage = `url(${LIKOVI[odabraniLik].pfp})`;
-      avatarEl.style.backgroundSize = "cover";
-      avatarEl.style.backgroundPosition = "center";
-      avatarEl.style.backgroundRepeat = "no-repeat";
-    } else if (avatarEl) {
-      avatarEl.style.background = "transparent";
-      avatarEl.style.backgroundImage = "none";
-    }
-  });
-}
-
-function prikaziUsername() {
-  document.querySelectorAll('.vrijeme_username, .odabir_username, .outfit_username').forEach(el => {
-    el.textContent = "Player";
-  });
-}
-
-function prikaziKovanice(kolicina) {
-  document.querySelectorAll('#koin_iznos, #koin_iznos_outfit').forEach(el => {
-    if (el) {
-      el.innerHTML = `${kolicina} <img src="https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/kovanice.png?alt=media&token=5336525d-db0a-416c-8764-2af36f79ec15">`;
-    }
-  });
-}
-
-// FUNKCIJA ZA AŽURIRANJE SPRITE ANIMACIJE
-function updateFokusSpriteAnimation() {
-  const fokusSprite = document.getElementById('fokus_sprite');
-  if (!fokusSprite) return;
-
-  const aktivniOutfit = JSON.parse(localStorage.getItem('aktivniOutfit') || 'null'); // DIREKTNO
-  const odabraniLik = localStorage.getItem('odabraniLik'); // DIREKTNO
-
-  let spriteURL;
-  let cssClass;
-
-  if (aktivniOutfit && aktivniOutfit.sprite) {
-    spriteURL = aktivniOutfit.sprite.url;
-    cssClass = aktivniOutfit.sprite.cssClass;
-  } else {
-    // Za default sprite
-    if (LIKOVI[odabraniLik] && LIKOVI[odabraniLik].defaultSprite) {
-      spriteURL = LIKOVI[odabraniLik].defaultSprite.url;
-      cssClass = LIKOVI[odabraniLik].defaultSprite.cssClass;
-    }
-  }
-
-  if (spriteURL) {
-    fokusSprite.style.backgroundImage = `url(${spriteURL})`;
-    fokusSprite.className = 'sprite ' + cssClass;
-  }
-}
-
-// OVDJE DODAJ SVOJE const LIKOVI = { ... } I const OUTFITI = { ... } OBJEKTE
-
-
-
-// Podaci o likovima
 const LIKOVI = {
   luffy: {
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/luffy_logo.png?alt=media&token=944ae180-b307-453c-b729-31e6aab43b5f",
@@ -869,6 +570,310 @@ usop: [
 };
 
 
+
+
+window.addEventListener('DOMContentLoaded', () => {
+  
+  // Prikaži registraciju kao početnu stranicu
+  showPage('registracija');
+
+  // FAKE Login/Register linkovi (samo za navigaciju)
+  document.getElementById('link_registracija')?.addEventListener('click', e => {
+    e.preventDefault();
+    showPage('registracija');
+  });
+
+  document.getElementById('link_login')?.addEventListener('click', e => {
+    e.preventDefault();
+    showPage('prijava');
+  });
+
+  // FAKE REGISTRACIJA - samo ide na odabir
+  document.getElementById('forma_registracija').addEventListener('submit', e => {
+    e.preventDefault();
+    alert('Registracija uspješna!');
+    showPage('odabir');
+  });
+
+  // FAKE PRIJAVA - samo ide na odabir  
+  document.getElementById('forma_prijava').addEventListener('submit', e => {
+    e.preventDefault();
+    alert('Prijava uspješna!');
+    showPage('odabir');
+  });
+
+  // ODABIR LIKA - sprema direktno bez korisnika
+  document.querySelectorAll('.odabir_kartica').forEach(kartica => {
+    kartica.addEventListener('click', () => {
+      const odabraniLik = kartica.getAttribute('data-lik');
+      console.log('Odabran lik:', odabraniLik);
+      
+      localStorage.setItem('odabraniLik', odabraniLik);
+      prikaziOdabranogLika();
+      prikaziAvatar();
+      showPage('vrijeme');
+    });
+  });
+
+  // OUTFIT i VRIJEME gumbovi
+  document.getElementById('gumb_outfit')?.addEventListener('click', () => {
+    showPage('outfit');
+    prikaziOutfiteZaTrenutnogLika();
+  });
+
+  document.getElementById('gumb_vrijeme')?.addEventListener('click', () => {
+    showPage('vrijeme');
+  });
+
+  document.getElementById('gumb_vrijeme_outfit')?.addEventListener('click', () => {
+    showPage('vrijeme');
+  });
+
+  // FOKUS SYSTEM
+  document.getElementById('btn_pocni_fokus')?.addEventListener('click', zapocniFokus);
+
+  // VRIJEME KONTROLE
+  let sati = 0;
+  let minute = 0;
+
+  function azurirajPrikaz() {
+    const prikaz = document.getElementById('vrijeme_prikaz');
+    if (!prikaz) return;
+    const satStr = sati.toString().padStart(2, '0');
+    const minStr = minute.toString().padStart(2, '0');
+    prikaz.textContent = `${satStr}:${minStr}`;
+  }
+
+  document.getElementById('gore_vrijeme')?.addEventListener('click', () => {
+    minute += 10;
+    if (minute >= 60) {
+      minute = 0;
+      sati++;
+    }
+    if (sati > 23) {
+      sati = 23;
+      minute = 50;
+    }
+    azurirajPrikaz();
+  });
+
+  document.getElementById('dolje_vrijeme')?.addEventListener('click', () => {
+    minute -= 10;
+    if (minute < 0) {
+      if (sati > 0) {
+        sati--;
+        minute = 50;
+      } else {
+        sati = 0;
+        minute = 0;
+      }
+    }
+    azurirajPrikaz();
+  });
+
+  azurirajPrikaz();
+
+  // Inicijalne funkcije
+  prikaziUsername();
+  prikaziOdabranogLika();
+  prikaziAvatar();
+  prikaziKovanice(localStorage.getItem('kovanice') || 0);
+});
+
+// === GLAVNE FUNKCIJE ===
+
+function showPage(pageId) {
+  document.querySelectorAll('.page').forEach(el => el.classList.remove('visible'));
+  const pageToShow = document.getElementById(pageId);
+  if (pageToShow) pageToShow.classList.add('visible');
+  prikaziKovanice(localStorage.getItem('kovanice') || 0);
+}
+
+// OUTFIT FUNKCIJA - ISPRAVLJENA
+
+
+// FOKUS FUNKCIJA - S SPRITE ANIMACIJOM
+function zapocniFokus() {
+  const prikaz = document.getElementById('vrijeme_prikaz');
+  if (!prikaz) return;
+  
+  const [satStr, minStr] = prikaz.textContent.split(':');
+  let totalSec = parseInt(satStr, 10) * 3600 + parseInt(minStr, 10) * 60;
+  if (totalSec <= 0) return;
+
+  const odabraniLik = localStorage.getItem('odabraniLik');
+  if (!odabraniLik) {
+    alert('Moraš odabrati lik prvo!');
+    showPage('odabir');
+    return;
+  }
+
+  // SPRITE LOGIKA ZA FOKUS
+  const fokusSprite = document.getElementById('fokus_sprite');
+  if (fokusSprite) fokusSprite.style.backgroundImage = 'none';
+
+  let spriteURL, frameWidth, frameHeight, frameCount, frameDuration;
+  let aktivniOutfit = JSON.parse(localStorage.getItem('aktivniOutfit') || 'null');
+
+  if (aktivniOutfit && aktivniOutfit.sprite) {
+    spriteURL = aktivniOutfit.sprite.url;
+    frameWidth = aktivniOutfit.sprite.frameWidth;
+    frameHeight = aktivniOutfit.sprite.frameHeight;
+    frameCount = aktivniOutfit.sprite.frameCount;
+    frameDuration = 150;
+
+    const el = document.getElementById('fokus_sprite');
+    if (el) el.className = 'sprite ' + aktivniOutfit.sprite.cssClass;
+  } else {
+    // Koristi default sprite za odabranog lika
+    const lik = LIKOVI[odabraniLik];
+    if (lik && lik.defaultSprite) {
+      spriteURL = lik.defaultSprite.url;
+      frameWidth = lik.defaultSprite.frameWidth;
+      frameHeight = lik.defaultSprite.frameHeight;
+      frameCount = lik.defaultSprite.frameCount;
+      frameDuration = 150;
+    }
+  }
+
+  if (spriteURL) {
+    setTimeout(() => {
+      animateSprite('fokus_sprite', spriteURL, frameWidth, frameHeight, frameCount, frameDuration);
+    }, 100);
+  }
+
+  showPage('fokus');
+
+  const fokusVrijeme = document.getElementById('fokus_vrijeme');
+  if (fokusVrijeme) fokusVrijeme.textContent = prikaz.textContent;
+
+  let preostalo = totalSec;
+  const interval = setInterval(() => {
+    preostalo -= 60;
+    if (preostalo <= 0) {
+      fokusVrijeme.textContent = '00:00';
+      clearInterval(interval);
+      zavrsiFokus(totalSec);
+      return;
+    }
+    const minTotal = Math.floor(preostalo / 60);
+    const satiF = Math.floor(minTotal / 60);
+    const minF = minTotal % 60;
+    fokusVrijeme.textContent = `${String(satiF).padStart(2, '0')}:${String(minF).padStart(2, '0')}`;
+  }, 60000);
+}
+
+// SPRITE ANIMACIJA FUNKCIJA
+function animateSprite(elementId, spriteURL, frameWidth, frameHeight, frameCount, frameDuration) {
+  const el = document.getElementById(elementId);
+  if (!el) return;
+
+  if (el._spriteInterval) {
+    clearInterval(el._spriteInterval);
+    el._spriteInterval = null;
+  }
+  
+  setTimeout(() => {
+    el.style.backgroundImage = `url(${spriteURL})`;
+    
+    let frame = 0;
+    el._spriteInterval = setInterval(() => {
+      const xPos = -frame * frameWidth;
+      el.style.backgroundPosition = `${xPos}px 0px`;
+      frame = (frame + 1) % frameCount;
+    }, frameDuration);
+  }, 10);
+}
+
+function zavrsiFokus(totalSec) {
+  const dodatnihKovanica = Math.floor(totalSec / (30 * 60)) * 5;
+  const trenutneKovanice = parseInt(localStorage.getItem('kovanice') || '0', 10);
+  const noveKovanice = trenutneKovanice + dodatnihKovanica;
+  
+  localStorage.setItem('kovanice', noveKovanice);
+  prikaziKovanice(noveKovanice);
+  
+  alert(`Fokus završen! Zaradio si ${dodatnihKovanica} kovanica!`);
+  showPage('vrijeme');
+}
+
+function prikaziOdabranogLika() {
+  const odabraniLik = localStorage.getItem('odabraniLik');
+  const element = document.getElementById('vrijeme_lik');
+  if (LIKOVI[odabraniLik] && element) {
+    element.innerHTML = `<img src="${LIKOVI[odabraniLik].slika}" alt="${odabraniLik}" style="width:95px; height:95px; border-radius: 10px;">`;
+  } else if (element) {
+    element.innerHTML = '';
+  }
+}
+
+function prikaziAvatar() {
+  const odabraniLik = localStorage.getItem('odabraniLik');
+  
+  ['vrijeme_avatar', 'outfit_avatar'].forEach(id => {
+    const avatarEl = document.getElementById(id);  
+    if (LIKOVI[odabraniLik] && avatarEl) {
+      avatarEl.style.backgroundColor = LIKOVI[odabraniLik].boja;
+      avatarEl.style.backgroundImage = `url(${LIKOVI[odabraniLik].pfp})`;
+      avatarEl.style.backgroundSize = "cover";
+      avatarEl.style.backgroundPosition = "center";
+      avatarEl.style.backgroundRepeat = "no-repeat";
+    } else if (avatarEl) {
+      avatarEl.style.background = "transparent";
+      avatarEl.style.backgroundImage = "none";
+    }
+  });
+}
+
+function prikaziUsername() {
+  document.querySelectorAll('.vrijeme_username, .odabir_username, .outfit_username').forEach(el => {
+    el.textContent = "Player";
+  });
+}
+
+function prikaziKovanice(kolicina) {
+  document.querySelectorAll('#koin_iznos, #koin_iznos_outfit').forEach(el => {
+    if (el) {
+      el.innerHTML = `${kolicina} <img src="https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/kovanice.png?alt=media&token=5336525d-db0a-416c-8764-2af36f79ec15">`;
+    }
+  });
+}
+
+// FUNKCIJA ZA AŽURIRANJE SPRITE ANIMACIJE
+function updateFokusSpriteAnimation() {
+  const fokusSprite = document.getElementById('fokus_sprite');
+  if (!fokusSprite) return;
+
+  const aktivniOutfit = JSON.parse(localStorage.getItem('aktivniOutfit') || 'null'); // DIREKTNO
+  const odabraniLik = localStorage.getItem('odabraniLik'); // DIREKTNO
+
+  let spriteURL;
+  let cssClass;
+
+  if (aktivniOutfit && aktivniOutfit.sprite) {
+    spriteURL = aktivniOutfit.sprite.url;
+    cssClass = aktivniOutfit.sprite.cssClass;
+  } else {
+    // Za default sprite
+    if (LIKOVI[odabraniLik] && LIKOVI[odabraniLik].defaultSprite) {
+      spriteURL = LIKOVI[odabraniLik].defaultSprite.url;
+      cssClass = LIKOVI[odabraniLik].defaultSprite.cssClass;
+    }
+  }
+
+  if (spriteURL) {
+    fokusSprite.style.backgroundImage = `url(${spriteURL})`;
+    fokusSprite.className = 'sprite ' + cssClass;
+  }
+}
+
+// OVDJE DODAJ SVOJE const LIKOVI = { ... } I const OUTFITI = { ... } OBJEKTE
+
+
+
+// Podaci o likovima
+
+
 function prikaziOutfiteZaTrenutnogLika() {
   const wrapper = document.getElementById('outfit_cards_wrapper');
   if (!wrapper) return;
@@ -941,6 +946,7 @@ function prikaziOutfiteZaTrenutnogLika() {
 
   wrapper.appendChild(grid);
 }
+
 
 
 
