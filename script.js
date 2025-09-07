@@ -1049,7 +1049,7 @@ function updateUI(userData) {
 
 // Funkcija za odabir lika
 async function selectCharacter(characterName) {
-  const response = await fetch(`${API_URL}/update-characte`, {
+  const response = await fetch(`${API_URL}/update-character`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -1311,6 +1311,7 @@ prikaziOdabranogLika();
 prikaziAvatar();
 
 prikaziKovanice(localStorage.getItem('kovanice') || 0);
+
 
 
 
