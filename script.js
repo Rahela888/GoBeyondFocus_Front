@@ -214,7 +214,6 @@ function getUserSpecificKey(baseKey) {
   return `${username}_${baseKey}`;
 }
 
-const API_URL = 'https://gobeyondfocus-back-2.onrender.com'; 
 
 function clearErrors() {
   const regErr = document.getElementById('greska_registracija');
@@ -964,7 +963,7 @@ usop: [
 
 
 async function login(username, password) {
-  const response = await fetch('/login', {
+  const response = await fetch(`${API_URL}/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -1050,7 +1049,7 @@ function updateUI(userData) {
 
 // Funkcija za odabir lika
 async function selectCharacter(characterName) {
-  const response = await fetch('/update-character', {
+  const response = await fetch(`${API_URL}/update-characte`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -1093,7 +1092,7 @@ function selectOutfit(outfitName) {
 
 
 async function refreshUserData() {
-  const response = await fetch('/userdata', {
+  const response = await fetch(`${API_URL}/userdata`, {
     credentials: 'include'  // Šalje session cookie
   });
   
@@ -1312,6 +1311,7 @@ prikaziOdabranogLika();
 prikaziAvatar();
 
 prikaziKovanice(localStorage.getItem('kovanice') || 0);
+
 
 
 
