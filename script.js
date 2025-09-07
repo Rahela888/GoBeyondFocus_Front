@@ -52,8 +52,8 @@ if (gumbVrijemeOutfit) {
  document.getElementById('forma_prijava').addEventListener('submit', async e => {
   e.preventDefault();
   clearErrors();
-  const username = document.getElementById('loginUsername').value.trim();
-  const password = document.getElementById('loginPassword').value.trim();
+  const username = document.getElementById('logUsername').value.trim();
+  const password = document.getElementById('logLozinka').value.trim();
   if (!username || !password) {
     document.getElementById('greska_prijava').textContent = 'Svako polje mora biti popunjeno.';
     return;
@@ -1111,30 +1111,21 @@ function prikaziOutfiteZaTrenutnogLika() {
   const wrapper = document.getElementById('outfit_cards_wrapper');
   if (!wrapper) return;
   wrapper.innerHTML = '';
-  
-  // DEBUG
-  const username = localStorage.getItem('korisnickoIme');
-  console.log('Current username:', username);
-  
+
   let odabraniLik = localStorage.getItem(getUserSpecificKey('odabraniLik'));
-  console.log('Selected character:', odabraniLik);
-  console.log('Key used:', getUserSpecificKey('odabraniLik'));
-  
   if (!odabraniLik) {
-    console.log('No character selected, redirecting to selection');
     showPage('odabir');
     return;
   }
-  
-  const outfitiZaLik = OUTFITI[odabraniLik] || [];
-  console.log('Outfits for character:', outfitiZaLik);
 
-  // Kreiraj grid
+  // Prikaži outfite samo za odabranog lika
+  const outfitiZaLik = OUTFITI[odabraniLik] || [];
+
+  // Kupljeni outfiti se čuvaju po liku, ne po korisniku
+  let kupljeniOutfiti = JSON.parse(localStorage.getItem(odabraniLik + '_kupljeniOutfiti') || '[]');
+
   const grid = document.createElement('div');
   grid.className = 'outfit_cards_grid';
-
-  // Dohvati kupljene outfite iz localStorage
-  const kupljeniOutfiti = JSON.parse(localStorage.getItem(getUserSpecificKey("kupljeniOutfiti")) || "[]");
 
   outfitiZaLik.forEach((outfit, idx) => {
     const card = document.createElement('div');
@@ -1146,14 +1137,13 @@ function prikaziOutfiteZaTrenutnogLika() {
       <button class="outfit_card_btn">Kupi outfit</button>
     `;
 
-    // Provjeri je li outfit kupljen
+    // Provjeri je li outfit kupljen za ovog lika
     const kupljen = kupljeniOutfiti.some(o => o.ime === outfit.ime);
+
     if (kupljen) {
-      // Sakrij gumb
       const btn = card.querySelector('.outfit_card_btn');
       if (btn) btn.style.display = 'none';
 
-      // Dodaj oznaku "Kupljeno"
       const kupljenoLabel = document.createElement('span');
       kupljenoLabel.className = 'kupljeno-label';
       kupljenoLabel.textContent = 'Kupljeno';
@@ -1162,24 +1152,20 @@ function prikaziOutfiteZaTrenutnogLika() {
       kupljenoLabel.style.marginLeft = '10px';
       card.appendChild(kupljenoLabel);
     } else {
-      // Dodaj event listener za kupovinu
       card.querySelector('.outfit_card_btn').addEventListener('click', () => {
-        const coins = parseInt(localStorage.getItem('kovanice') || "0", 10);
+        const coins = parseInt(localStorage.getItem('kovanice') || '0', 10);
         if (coins < outfit.cijena) {
-          alert("Nemaš dovoljno kovanica!");
+          alert('Nemaš dovoljno kovanica!');
           return;
         }
-
-        // Oduzmi kovanice
+        
         localStorage.setItem('kovanice', coins - outfit.cijena);
         prikaziKovanice(coins - outfit.cijena);
 
-        // Spremi kupljeni outfit
-        let kupljeniOutfiti = JSON.parse(localStorage.getItem(getUserSpecificKey("kupljeniOutfiti")) || "[]");
+        // Spremi kupljeni outfit za određenog lika
         kupljeniOutfiti.push(outfit);
-        localStorage.setItem(getUserSpecificKey("kupljeniOutfiti"), JSON.stringify(kupljeniOutfiti));
+        localStorage.setItem(odabraniLik + '_kupljeniOutfiti', JSON.stringify(kupljeniOutfiti));
 
-        // Sakrij gumb i prikaži napis kupljeno
         const btn = card.querySelector('.outfit_card_btn');
         if (btn) btn.style.display = 'none';
 
@@ -1194,23 +1180,17 @@ function prikaziOutfiteZaTrenutnogLika() {
           card.appendChild(kupljenoLabel);
         }
 
-        // Postavi kao aktivni outfit
-        localStorage.setItem(getUserSpecificKey("aktivniOutfit"), JSON.stringify(outfit));
-        
-        // Osvježi animaciju sprita odmah nakon promjene outfita
+        localStorage.setItem(getUserSpecificKey('aktivniOutfit'), JSON.stringify(outfit));
         updateFokusSpriteAnimation();
-
-        alert("Kupio si outfit: " + outfit.ime);
+        alert('Kupio si outfit: ' + outfit.ime);
       });
     }
 
-    // Dodaj karticu u grid
     grid.appendChild(card);
   });
 
   wrapper.appendChild(grid);
 }
-
 
 
 
@@ -1311,6 +1291,7 @@ prikaziOdabranogLika();
 prikaziAvatar();
 
 prikaziKovanice(localStorage.getItem('kovanice') || 0);
+
 
 
 
