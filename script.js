@@ -115,12 +115,13 @@ function showPage(pageId) {
   prikaziKovanice(localStorage.getItem('kovanice') || 0);
 }
 
+// OUTFIT FUNKCIJA - ISPRAVLJENA
 function prikaziOutfiteZaTrenutnogLika() {
   const wrapper = document.getElementById('outfit_cards_wrapper');
   if (!wrapper) return;
   wrapper.innerHTML = '';
 
-  const odabraniLik = localStorage.getItem('odabraniLik');
+  const odabraniLik = localStorage.getItem('odabraniLik'); // DIREKTNO bez getUserSpecificKey
   if (!odabraniLik) {
     wrapper.innerHTML = '<p style="color: white; text-align: center;">Molim odaberite lik prvo!</p>';
     return;
@@ -176,7 +177,8 @@ function prikaziOutfiteZaTrenutnogLika() {
         kupljenoLabel.style.fontWeight = 'bold';
         card.appendChild(kupljenoLabel);
 
-        localStorage.setItem('aktivniOutfit', JSON.stringify(outfit));
+        localStorage.setItem('aktivniOutfit', JSON.stringify(outfit)); // DIREKTNO
+        updateFokusSpriteAnimation(); // Ova funkcija postoji dolje
         alert('Kupio si outfit: ' + outfit.ime);
       });
     }
@@ -187,6 +189,7 @@ function prikaziOutfiteZaTrenutnogLika() {
   wrapper.appendChild(grid);
 }
 
+// FOKUS FUNKCIJA - S SPRITE ANIMACIJOM
 function zapocniFokus() {
   const prikaz = document.getElementById('vrijeme_prikaz');
   if (!prikaz) return;
@@ -200,6 +203,40 @@ function zapocniFokus() {
     alert('Moraš odabrati lik prvo!');
     showPage('odabir');
     return;
+  }
+
+  // SPRITE LOGIKA ZA FOKUS
+  const fokusSprite = document.getElementById('fokus_sprite');
+  if (fokusSprite) fokusSprite.style.backgroundImage = 'none';
+
+  let spriteURL, frameWidth, frameHeight, frameCount, frameDuration;
+  let aktivniOutfit = JSON.parse(localStorage.getItem('aktivniOutfit') || 'null');
+
+  if (aktivniOutfit && aktivniOutfit.sprite) {
+    spriteURL = aktivniOutfit.sprite.url;
+    frameWidth = aktivniOutfit.sprite.frameWidth;
+    frameHeight = aktivniOutfit.sprite.frameHeight;
+    frameCount = aktivniOutfit.sprite.frameCount;
+    frameDuration = 150;
+
+    const el = document.getElementById('fokus_sprite');
+    if (el) el.className = 'sprite ' + aktivniOutfit.sprite.cssClass;
+  } else {
+    // Koristi default sprite za odabranog lika
+    const lik = LIKOVI[odabraniLik];
+    if (lik && lik.defaultSprite) {
+      spriteURL = lik.defaultSprite.url;
+      frameWidth = lik.defaultSprite.frameWidth;
+      frameHeight = lik.defaultSprite.frameHeight;
+      frameCount = lik.defaultSprite.frameCount;
+      frameDuration = 150;
+    }
+  }
+
+  if (spriteURL) {
+    setTimeout(() => {
+      animateSprite('fokus_sprite', spriteURL, frameWidth, frameHeight, frameCount, frameDuration);
+    }, 100);
   }
 
   showPage('fokus');
@@ -221,6 +258,28 @@ function zapocniFokus() {
     const minF = minTotal % 60;
     fokusVrijeme.textContent = `${String(satiF).padStart(2, '0')}:${String(minF).padStart(2, '0')}`;
   }, 60000);
+}
+
+// SPRITE ANIMACIJA FUNKCIJA
+function animateSprite(elementId, spriteURL, frameWidth, frameHeight, frameCount, frameDuration) {
+  const el = document.getElementById(elementId);
+  if (!el) return;
+
+  if (el._spriteInterval) {
+    clearInterval(el._spriteInterval);
+    el._spriteInterval = null;
+  }
+  
+  setTimeout(() => {
+    el.style.backgroundImage = `url(${spriteURL})`;
+    
+    let frame = 0;
+    el._spriteInterval = setInterval(() => {
+      const xPos = -frame * frameWidth;
+      el.style.backgroundPosition = `${xPos}px 0px`;
+      frame = (frame + 1) % frameCount;
+    }, frameDuration);
+  }, 10);
 }
 
 function zavrsiFokus(totalSec) {
@@ -276,6 +335,37 @@ function prikaziKovanice(kolicina) {
     }
   });
 }
+
+// FUNKCIJA ZA AŽURIRANJE SPRITE ANIMACIJE
+function updateFokusSpriteAnimation() {
+  const fokusSprite = document.getElementById('fokus_sprite');
+  if (!fokusSprite) return;
+
+  const aktivniOutfit = JSON.parse(localStorage.getItem('aktivniOutfit') || 'null'); // DIREKTNO
+  const odabraniLik = localStorage.getItem('odabraniLik'); // DIREKTNO
+
+  let spriteURL;
+  let cssClass;
+
+  if (aktivniOutfit && aktivniOutfit.sprite) {
+    spriteURL = aktivniOutfit.sprite.url;
+    cssClass = aktivniOutfit.sprite.cssClass;
+  } else {
+    // Za default sprite
+    if (LIKOVI[odabraniLik] && LIKOVI[odabraniLik].defaultSprite) {
+      spriteURL = LIKOVI[odabraniLik].defaultSprite.url;
+      cssClass = LIKOVI[odabraniLik].defaultSprite.cssClass;
+    }
+  }
+
+  if (spriteURL) {
+    fokusSprite.style.backgroundImage = `url(${spriteURL})`;
+    fokusSprite.className = 'sprite ' + cssClass;
+  }
+}
+
+// OVDJE DODAJ SVOJE const LIKOVI = { ... } I const OUTFITI = { ... } OBJEKTE
+
 
 
 // Podaci o likovima
@@ -848,6 +938,7 @@ usop: [
 ]
 
 };
+
 
 
 
