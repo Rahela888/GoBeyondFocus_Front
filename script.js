@@ -867,29 +867,7 @@ usop: [
 
 
 
-async function login(username, password) {
-  const response = await fetch(`${API_URL}/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
-    body: JSON.stringify({ username, password })
-  });
-  
-  if (response.ok) {
-    const data = await response.json();
-    
-    // Spremi u localStorage
-    localStorage.setItem('userData', JSON.stringify(data.korisnik));
-    
-    // Ažuriraj UI odmah
-    updateUI(data.korisnik);
-    
-    // Dohvati najnovije podatke iz baze
-    await refreshUserData();
-  } else {
-    alert('Neuspješna prijava');
-  }
-}
+
 
 
 
@@ -1112,36 +1090,6 @@ function prikaziOdabranogLika() {
 
 
 // Prikaz avatara (boja i slika) na više mjesta
-function prikaziAvatar() {
-  const odabraniLik = localStorage.getItem('odabraniLik'); // ✅ Direktno
-  
-  ['vrijeme_avatar', 'outfit_avatar'].forEach(id => {
-    const avatarEl = document.getElementById(id);  
-    if (LIKOVI[odabraniLik] && avatarEl) {
-      avatarEl.style.backgroundColor = LIKOVI[odabraniLik].boja;
-      avatarEl.style.backgroundImage = `url(${LIKOVI[odabraniLik].pfp})`;
-      avatarEl.style.backgroundSize = "cover";
-      avatarEl.style.backgroundPosition = "center";
-      avatarEl.style.backgroundRepeat = "no-repeat";
-    } else if (avatarEl) {
-      avatarEl.style.background = "transparent";
-      avatarEl.style.backgroundImage = "none";
-    }
-  });
-}
-
-  const outfitAvatarEl = document.getElementById('outfit_avatar');
-  if (LIKOVI[odabraniLik] && outfitAvatarEl) {
-    outfitAvatarEl.style.backgroundColor = LIKOVI[odabraniLik].boja;
-    outfitAvatarEl.style.backgroundImage = `url(${LIKOVI[odabraniLik].pfp})`;
-    outfitAvatarEl.style.backgroundSize = "cover";
-    outfitAvatarEl.style.backgroundPosition = "center";
-    outfitAvatarEl.style.backgroundRepeat = "no-repeat";
-  } else if (outfitAvatarEl) {
-    outfitAvatarEl.style.background = "transparent";
-    outfitAvatarEl.style.backgroundImage = "none";
-  }
-}
 
 // Prikaz korisničkog imena na svim relevantnim mjestima
 function prikaziUsername() {
@@ -1201,6 +1149,7 @@ prikaziOdabranogLika();
 prikaziAvatar();
 
 prikaziKovanice(localStorage.getItem('kovanice') || 0);
+
 
 
 
