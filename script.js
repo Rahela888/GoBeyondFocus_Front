@@ -124,7 +124,7 @@ function prikaziOutfiteZaTrenutnogLika() {
   if (!wrapper) return;
   wrapper.innerHTML = '';
 
-  const odabraniLik = localStorage.getItem('odabraniLik');
+  const odabraniLik = localStorage.getItem('odabraniLik'); 
   if (!odabraniLik) {
     wrapper.innerHTML = '<p style="color: white; text-align: center;">Molim odaberite lik prvo!</p>';
     return;
@@ -207,7 +207,7 @@ function zapocniFokus() {
   let totalSec = parseInt(satStr, 10) * 3600 + parseInt(minStr, 10) * 60;
   if (totalSec <= 0) return;
 
-  const odabraniLik = localStorage.getItem('odabraniLik');
+   const odabraniLik = localStorage.getItem('odabraniLik');
   if (!odabraniLik) {
     alert('Moraš odabrati lik prvo!');
     showPage('odabir');
@@ -1101,29 +1101,34 @@ function prikaziOutfiteZaTrenutnogLika() {
 
 // Prikaz odabranog lika u crvenoj kocki
 function prikaziOdabranogLika() {
-  const odabraniLik = localStorage.getItem(getUserSpecificKey('odabraniLik')); 
+  const odabraniLik = localStorage.getItem('odabraniLik'); // ✅ Direktno
   const element = document.getElementById('vrijeme_lik');
   if (LIKOVI[odabraniLik] && element) {
     element.innerHTML = `<img src="${LIKOVI[odabraniLik].slika}" alt="${odabraniLik}" style="width:95px; height:95px; border-radius: 10px;">`;
   } else if (element) {
-    element.innerHTML = '';  // nema lika, prazno
+    element.innerHTML = '';
   }
 }
 
+
 // Prikaz avatara (boja i slika) na više mjesta
 function prikaziAvatar() {
-  const odabraniLik = localStorage.getItem(getUserSpecificKey('odabraniLik')); 
-  const avatarEl = document.getElementById('vrijeme_avatar');
-  if (LIKOVI[odabraniLik] && avatarEl) {
-    avatarEl.style.backgroundColor = LIKOVI[odabraniLik].boja;
-    avatarEl.style.backgroundImage = `url(${LIKOVI[odabraniLik].pfp})`;
-    avatarEl.style.backgroundSize = "cover";
-    avatarEl.style.backgroundPosition = "center";
-    avatarEl.style.backgroundRepeat = "no-repeat";
-  } else if (avatarEl) {
-    avatarEl.style.background = "transparent";
-    avatarEl.style.backgroundImage = "none";
-  }
+  const odabraniLik = localStorage.getItem('odabraniLik'); // ✅ Direktno
+  
+  ['vrijeme_avatar', 'outfit_avatar'].forEach(id => {
+    const avatarEl = document.getElementById(id);  
+    if (LIKOVI[odabraniLik] && avatarEl) {
+      avatarEl.style.backgroundColor = LIKOVI[odabraniLik].boja;
+      avatarEl.style.backgroundImage = `url(${LIKOVI[odabraniLik].pfp})`;
+      avatarEl.style.backgroundSize = "cover";
+      avatarEl.style.backgroundPosition = "center";
+      avatarEl.style.backgroundRepeat = "no-repeat";
+    } else if (avatarEl) {
+      avatarEl.style.background = "transparent";
+      avatarEl.style.backgroundImage = "none";
+    }
+  });
+}
 
   const outfitAvatarEl = document.getElementById('outfit_avatar');
   if (LIKOVI[odabraniLik] && outfitAvatarEl) {
