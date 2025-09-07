@@ -116,78 +116,7 @@ function showPage(pageId) {
 }
 
 // OUTFIT FUNKCIJA - ISPRAVLJENA
-function prikaziOutfiteZaTrenutnogLika() {
-  const wrapper = document.getElementById('outfit_cards_wrapper');
-  if (!wrapper) return;
-  wrapper.innerHTML = '';
 
-  const odabraniLik = localStorage.getItem('odabraniLik'); // DIREKTNO bez getUserSpecificKey
-  if (!odabraniLik) {
-    wrapper.innerHTML = '<p style="color: white; text-align: center;">Molim odaberite lik prvo!</p>';
-    return;
-  }
-
-  const outfitiZaLik = OUTFITI[odabraniLik] || [];
-  let kupljeniOutfiti = JSON.parse(localStorage.getItem(odabraniLik + '_outfiti') || '[]');
-
-  const grid = document.createElement('div');
-  grid.className = 'outfit_cards_grid';
-
-  outfitiZaLik.forEach((outfit, idx) => {
-    const card = document.createElement('div');
-    card.className = 'outfit_card';
-    card.innerHTML = `
-      <img src="${outfit.slika}" alt="Outfit ${idx + 1}">
-      <span class="outfit_card_name">${outfit.ime}</span>
-      <div class="outfit_card_price">${outfit.cijena} <img src="https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/kovanice.png?alt=media&token=5336525d-db0a-416c-8764-2af36f79ec15" style="width:18px;height:18px; vertical-align:middle;"> </div>
-      <button class="outfit_card_btn">Kupi outfit</button>
-    `;
-
-    const kupljen = kupljeniOutfiti.some(o => o.ime === outfit.ime);
-
-    if (kupljen) {
-      const btn = card.querySelector('.outfit_card_btn');
-      if (btn) btn.style.display = 'none';
-
-      const kupljenoLabel = document.createElement('span');
-      kupljenoLabel.textContent = 'Kupljeno';
-      kupljenoLabel.style.color = 'green';
-      kupljenoLabel.style.fontWeight = 'bold';
-      card.appendChild(kupljenoLabel);
-    } else {
-      card.querySelector('.outfit_card_btn').addEventListener('click', () => {
-        const coins = parseInt(localStorage.getItem('kovanice') || '0', 10);
-        if (coins < outfit.cijena) {
-          alert('Nemaš dovoljno kovanica!');
-          return;
-        }
-        
-        localStorage.setItem('kovanice', coins - outfit.cijena);
-        prikaziKovanice(coins - outfit.cijena);
-
-        kupljeniOutfiti.push(outfit);
-        localStorage.setItem(odabraniLik + '_outfiti', JSON.stringify(kupljeniOutfiti));
-
-        const btn = card.querySelector('.outfit_card_btn');
-        if (btn) btn.style.display = 'none';
-
-        const kupljenoLabel = document.createElement('span');
-        kupljenoLabel.textContent = 'Kupljeno';
-        kupljenoLabel.style.color = 'green';
-        kupljenoLabel.style.fontWeight = 'bold';
-        card.appendChild(kupljenoLabel);
-
-        localStorage.setItem('aktivniOutfit', JSON.stringify(outfit)); // DIREKTNO
-        updateFokusSpriteAnimation(); // Ova funkcija postoji dolje
-        alert('Kupio si outfit: ' + outfit.ime);
-      });
-    }
-
-    grid.appendChild(card);
-  });
-
-  wrapper.appendChild(grid);
-}
 
 // FOKUS FUNKCIJA - S SPRITE ANIMACIJOM
 function zapocniFokus() {
@@ -940,6 +869,78 @@ usop: [
 };
 
 
+function prikaziOutfiteZaTrenutnogLika() {
+  const wrapper = document.getElementById('outfit_cards_wrapper');
+  if (!wrapper) return;
+  wrapper.innerHTML = '';
+
+  const odabraniLik = localStorage.getItem('odabraniLik'); // DIREKTNO bez getUserSpecificKey
+  if (!odabraniLik) {
+    wrapper.innerHTML = '<p style="color: white; text-align: center;">Molim odaberite lik prvo!</p>';
+    return;
+  }
+
+  const outfitiZaLik = OUTFITI[odabraniLik] || [];
+  let kupljeniOutfiti = JSON.parse(localStorage.getItem(odabraniLik + '_outfiti') || '[]');
+
+  const grid = document.createElement('div');
+  grid.className = 'outfit_cards_grid';
+
+  outfitiZaLik.forEach((outfit, idx) => {
+    const card = document.createElement('div');
+    card.className = 'outfit_card';
+    card.innerHTML = `
+      <img src="${outfit.slika}" alt="Outfit ${idx + 1}">
+      <span class="outfit_card_name">${outfit.ime}</span>
+      <div class="outfit_card_price">${outfit.cijena} <img src="https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/kovanice.png?alt=media&token=5336525d-db0a-416c-8764-2af36f79ec15" style="width:18px;height:18px; vertical-align:middle;"> </div>
+      <button class="outfit_card_btn">Kupi outfit</button>
+    `;
+
+    const kupljen = kupljeniOutfiti.some(o => o.ime === outfit.ime);
+
+    if (kupljen) {
+      const btn = card.querySelector('.outfit_card_btn');
+      if (btn) btn.style.display = 'none';
+
+      const kupljenoLabel = document.createElement('span');
+      kupljenoLabel.textContent = 'Kupljeno';
+      kupljenoLabel.style.color = 'green';
+      kupljenoLabel.style.fontWeight = 'bold';
+      card.appendChild(kupljenoLabel);
+    } else {
+      card.querySelector('.outfit_card_btn').addEventListener('click', () => {
+        const coins = parseInt(localStorage.getItem('kovanice') || '0', 10);
+        if (coins < outfit.cijena) {
+          alert('Nemaš dovoljno kovanica!');
+          return;
+        }
+        
+        localStorage.setItem('kovanice', coins - outfit.cijena);
+        prikaziKovanice(coins - outfit.cijena);
+
+        kupljeniOutfiti.push(outfit);
+        localStorage.setItem(odabraniLik + '_outfiti', JSON.stringify(kupljeniOutfiti));
+
+        const btn = card.querySelector('.outfit_card_btn');
+        if (btn) btn.style.display = 'none';
+
+        const kupljenoLabel = document.createElement('span');
+        kupljenoLabel.textContent = 'Kupljeno';
+        kupljenoLabel.style.color = 'green';
+        kupljenoLabel.style.fontWeight = 'bold';
+        card.appendChild(kupljenoLabel);
+
+        localStorage.setItem('aktivniOutfit', JSON.stringify(outfit)); // DIREKTNO
+        updateFokusSpriteAnimation(); // Ova funkcija postoji dolje
+        alert('Kupio si outfit: ' + outfit.ime);
+      });
+    }
+
+    grid.appendChild(card);
+  });
+
+  wrapper.appendChild(grid);
+}
 
 
 
