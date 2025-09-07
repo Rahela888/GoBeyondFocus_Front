@@ -120,7 +120,7 @@ async function login(username, password) {
 
 
 async function logout() {
-  const response = await fetch('/logout', {
+  const response = await fetch(`${API_URL}/logout`, {
     method: 'POST',
     credentials: 'include'
   });
@@ -962,7 +962,7 @@ usop: [
 };
 
 
-// NOVA login funkcija (KORISTI OVU)
+
 async function login(username, password) {
   const response = await fetch('/login', {
     method: 'POST',
@@ -990,19 +990,19 @@ async function login(username, password) {
 
 
 function updateUI(userData) {
-  // Ažuriraj username ako postoji element
+
   const usernameElement = document.getElementById('username');
   if (usernameElement) {
     usernameElement.textContent = userData.username;
   }
   
-  // Ažuriraj kovanice
+
   const coinsElement = document.getElementById('coins');
   if (coinsElement) {
     coinsElement.textContent = userData.coins;
   }
   
-  // Postavi odabrani lik ako postoji
+
   if (userData.selectedCharacter) {
     // Pronađi sve likove i ukloni 'selected' klasu
     const allCharacters = document.querySelectorAll('.character');
@@ -1312,5 +1312,6 @@ prikaziOdabranogLika();
 prikaziAvatar();
 
 prikaziKovanice(localStorage.getItem('kovanice') || 0);
+
 
 
