@@ -1,6 +1,6 @@
 
 window.addEventListener('DOMContentLoaded', () => {
-  const API_URL = 'http://localhost:3000';
+  const API_URL = 'https://gobeyondfocus-back-2.onrender.com/';
 
 
 const linkRegistracija = document.getElementById('link_registracija');
@@ -1312,3 +1312,4 @@ prikaziOdabranogLika();
 prikaziAvatar();
 
 prikaziKovanice(localStorage.getItem('kovanice') || 0);
+
