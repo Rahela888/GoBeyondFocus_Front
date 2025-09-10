@@ -1,9 +1,9 @@
 console.log('Script učitan');
 
-// === 1. DOM CONTENT LOADED PRVO ===
+// === DOM CONTENT LOADED ===
 window.addEventListener('DOMContentLoaded', () => {
   console.log('DOM spreman');
-
+  
   // FAKE REGISTRACIJA
   const formaRegistracija = document.getElementById('forma_registracija');
   if (formaRegistracija) {
@@ -13,7 +13,7 @@ window.addEventListener('DOMContentLoaded', () => {
       showPage('odabir');
     });
   }
-
+  
   // FAKE PRIJAVA
   const formaPrijava = document.getElementById('forma_prijava');
   if (formaPrijava) {
@@ -23,34 +23,30 @@ window.addEventListener('DOMContentLoaded', () => {
       showPage('odabir');
     });
   }
-
+  
   // NAVIGACIJA LINKOVI
   document.getElementById('link_login')?.addEventListener('click', e => {
     e.preventDefault();
     showPage('prijava');
   });
-
   document.getElementById('link_registracija')?.addEventListener('click', e => {
     e.preventDefault();
     showPage('registracija');
   });
-
+  
   // GUMBOVI
   document.getElementById('gumb_outfit')?.addEventListener('click', () => {
     showPage('outfit');
     prikaziOutfiteZaTrenutnogLika();
   });
-
   document.getElementById('gumb_vrijeme')?.addEventListener('click', () => {
     showPage('vrijeme');
   });
-
   document.getElementById('gumb_vrijeme_outfit')?.addEventListener('click', () => {
     showPage('vrijeme');
   });
-
   document.getElementById('btn_pocni_fokus')?.addEventListener('click', zapocniFokus);
-
+  
   // ODABIR LIKA
   document.querySelectorAll('.odabir_kartica').forEach(kartica => {
     kartica.addEventListener('click', () => {
@@ -61,11 +57,11 @@ window.addEventListener('DOMContentLoaded', () => {
       showPage('vrijeme');
     });
   });
-
+  
   // VRIJEME KONTROLE
   let sati = 0;
   let minute = 0;
-
+  
   function azurirajPrikaz() {
     const prikaz = document.getElementById('vrijeme_prikaz');
     if (!prikaz) return;
@@ -73,7 +69,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const minStr = minute.toString().padStart(2, '0');
     prikaz.textContent = `${satStr}:${minStr}`;
   }
-
+  
   document.getElementById('gore_vrijeme')?.addEventListener('click', () => {
     minute += 10;
     if (minute >= 60) {
@@ -82,7 +78,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
     azurirajPrikaz();
   });
-
+  
   document.getElementById('dolje_vrijeme')?.addEventListener('click', () => {
     minute -= 10;
     if (minute < 0) {
@@ -96,9 +92,9 @@ window.addEventListener('DOMContentLoaded', () => {
     }
     azurirajPrikaz();
   });
-
+  
   azurirajPrikaz();
-
+  
   // POČETNI PRIKAZ
   setTimeout(() => {
     showPage('registracija');
@@ -108,7 +104,6 @@ window.addEventListener('DOMContentLoaded', () => {
     prikaziKovanice(localStorage.getItem('kovanice') || 0);
   }, 100);
 });
-
 
 
 const LIKOVI = {
@@ -681,13 +676,12 @@ usop: [
 
 };
 
-
 console.log('Script učitan');
 
-// === 1. DOM CONTENT LOADED PRVO ===
+// === DOM CONTENT LOADED ===
 window.addEventListener('DOMContentLoaded', () => {
   console.log('DOM spreman');
-
+  
   // FAKE REGISTRACIJA
   const formaRegistracija = document.getElementById('forma_registracija');
   if (formaRegistracija) {
@@ -697,7 +691,7 @@ window.addEventListener('DOMContentLoaded', () => {
       showPage('odabir');
     });
   }
-
+  
   // FAKE PRIJAVA
   const formaPrijava = document.getElementById('forma_prijava');
   if (formaPrijava) {
@@ -707,34 +701,30 @@ window.addEventListener('DOMContentLoaded', () => {
       showPage('odabir');
     });
   }
-
+  
   // NAVIGACIJA LINKOVI
   document.getElementById('link_login')?.addEventListener('click', e => {
     e.preventDefault();
     showPage('prijava');
   });
-
   document.getElementById('link_registracija')?.addEventListener('click', e => {
     e.preventDefault();
     showPage('registracija');
   });
-
+  
   // GUMBOVI
   document.getElementById('gumb_outfit')?.addEventListener('click', () => {
     showPage('outfit');
     prikaziOutfiteZaTrenutnogLika();
   });
-
   document.getElementById('gumb_vrijeme')?.addEventListener('click', () => {
     showPage('vrijeme');
   });
-
   document.getElementById('gumb_vrijeme_outfit')?.addEventListener('click', () => {
     showPage('vrijeme');
   });
-
   document.getElementById('btn_pocni_fokus')?.addEventListener('click', zapocniFokus);
-
+  
   // ODABIR LIKA
   document.querySelectorAll('.odabir_kartica').forEach(kartica => {
     kartica.addEventListener('click', () => {
@@ -745,11 +735,11 @@ window.addEventListener('DOMContentLoaded', () => {
       showPage('vrijeme');
     });
   });
-
+  
   // VRIJEME KONTROLE
   let sati = 0;
   let minute = 0;
-
+  
   function azurirajPrikaz() {
     const prikaz = document.getElementById('vrijeme_prikaz');
     if (!prikaz) return;
@@ -757,7 +747,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const minStr = minute.toString().padStart(2, '0');
     prikaz.textContent = `${satStr}:${minStr}`;
   }
-
+  
   document.getElementById('gore_vrijeme')?.addEventListener('click', () => {
     minute += 10;
     if (minute >= 60) {
@@ -767,7 +757,6 @@ window.addEventListener('DOMContentLoaded', () => {
     azurirajPrikaz();
   });
   
-
   document.getElementById('dolje_vrijeme')?.addEventListener('click', () => {
     minute -= 10;
     if (minute < 0) {
@@ -781,9 +770,9 @@ window.addEventListener('DOMContentLoaded', () => {
     }
     azurirajPrikaz();
   });
-
+  
   azurirajPrikaz();
-
+  
   // POČETNI PRIKAZ
   setTimeout(() => {
     showPage('registracija');
@@ -793,60 +782,4 @@ window.addEventListener('DOMContentLoaded', () => {
     prikaziKovanice(localStorage.getItem('kovanice') || 0);
   }, 100);
 });
-
-function prikaziOutfiteZaTrenutnogLika() {
-  const odabraniLik = localStorage.getItem('odabraniLik');
-  if (!odabraniLik || !OUTFITI[odabraniLik]) {
-    console.log('Nema odabranog lika ili outfita');
-    return;
-  }
-
-  const kontejner = document.getElementById('outfit_kontejner');
-  if (!kontejner) return;
-
-  kontejner.innerHTML = ''; // Očisti postojeće outfite
-
-  OUTFITI[odabraniLik].forEach((outfit, index) => {
-    const outfitDiv = document.createElement('div');
-    outfitDiv.className = 'outfit_kartica';
-    outfitDiv.innerHTML = `
-      <img src="${outfit.slika}" alt="${outfit.ime}">
-      <h3>${outfit.ime}</h3>
-      <p>Cijena: ${outfit.cijena} kovanica</p>
-      <button onclick="kupiOutfit('${odabraniLik}', ${index})">Kupi</button>
-    `;
-    kontejner.appendChild(outfitDiv);
-  });
-}
-
-// POKRENI SPRITE ANIMACIJU
-function pokreniSpriteAnimaciju() {
-  const spriteElement = document.getElementById('fokus_sprite');
-  if (!spriteElement) return;
-  
-  const odabraniLik = localStorage.getItem('odabraniLik');
-  if (!odabraniLik) return;
-  
-  // Provjeri ima li trenutni outfit
-  const trenutniOutfitStr = localStorage.getItem('trenutniOutfit');
-  let spriteData;
-  
-  if (trenutniOutfitStr) {
-    const trenutniOutfit = JSON.parse(trenutniOutfitStr);
-    if (trenutniOutfit.lik === odabraniLik) {
-      spriteData = OUTFITI[odabraniLik][trenutniOutfit.outfitIndex].sprite;
-    } else {
-      spriteData = LIKOVI[odabraniLik].defaultSprite;
-    }
-  } else {
-    spriteData = LIKOVI[odabraniLik].defaultSprite;
-  }
-  
-  // Postavi sprite
-  spriteElement.style.backgroundImage = `url(${spriteData.url})`;
-  spriteElement.style.width = `${spriteData.frameWidth}px`;
-  spriteElement.style.height = `${spriteData.frameHeight}px`;
-  spriteElement.className = `sprite-animacija ${spriteData.cssClass}`;
-}
-
 
