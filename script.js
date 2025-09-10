@@ -15,7 +15,7 @@ window.addEventListener('DOMContentLoaded', () => {
     formaRegistracija.addEventListener('submit', e => {
       e.preventDefault();
       console.log('Fake registracija');
-      localStorage.setItem('korisnickoIme', 'Demo korisnik');
+      localStorage.setItem('korisnickoIme', 'username');
       alert('Registracija uspješna!');
       showPage('odabir');
     });
@@ -27,7 +27,7 @@ window.addEventListener('DOMContentLoaded', () => {
     formaPrijava.addEventListener('submit', e => {
       e.preventDefault();
       console.log('Fake prijava');
-      localStorage.setItem('korisnickoIme', 'Demo korisnik');
+      localStorage.setItem('korisnickoIme', 'username');
       alert('Prijava uspješna!');
       showPage('odabir');
     });
@@ -249,7 +249,7 @@ frameWidth: 195,
 {
     ime: "Boxing Champion",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/luffyboks.png?alt=media&token=16717286-7e69-4c9a-80c7-82bd136088f3",
-    cijena: 20,
+    cijena: 40,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/spritemali45.png?alt=media&token=d465d492-9f6a-4dba-9f6c-83d3f6c01f0e",
       frameWidth: 193,      // Nova širina
@@ -262,7 +262,7 @@ frameWidth: 195,
 {
     ime: "Wano kimono",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/luffykina.png?alt=media&token=338d34be-b8ac-4da3-8764-dc392d0d9d59",
-    cijena: 20,
+    cijena: 60,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/spriteluffy60.png?alt=media&token=e6420f57-2dda-44ac-9e46-00e07757a09f",
     frameWidth: 196,      // Nova širina
@@ -275,7 +275,7 @@ frameWidth: 195,
 {
     ime: "Haloween",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/lufyhello.png?alt=media&token=031c0f09-fea9-486e-9198-638564d2fda7",
-    cijena: 20,
+    cijena: 80,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/spriteluffy80.png?alt=media&token=ac756410-14ef-4d07-b85d-026cee2c6302",
     frameWidth: 144,      // Nova širina
@@ -288,7 +288,7 @@ frameWidth: 195,
 {
     ime: "Fire",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/luffyvatra.png?alt=media&token=cf14900d-6a5a-4191-8d7e-e7140dac0530",
-    cijena: 20,
+    cijena: 100,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/spriteluffy100.png?alt=media&token=c151c915-79ed-4f84-bca7-fc8f933dac91",
       frameWidth: 273,      // Nova širina
@@ -330,7 +330,7 @@ frameWidth: 255,      // Nova širina
 {
     ime: "Googles fighter",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/zoro45.png?alt=media&token=afcccc55-46e3-4367-8ad9-27d723c82ce3",
-    cijena: 20,
+    cijena: 40,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/zorosprite45.png?alt=media&token=c9c7016d-504a-4d79-8dfa-f04b3d0e0d74",
    frameWidth: 338,      // Nova širina
@@ -343,7 +343,7 @@ frameWidth: 255,      // Nova širina
 {
     ime: "Samurai",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/zoro60.png?alt=media&token=3df7999d-bade-467f-bda4-adc191c77be5",
-    cijena: 20,
+    cijena: 60,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/zorosprite60.png?alt=media&token=ed3b3e84-408a-4fca-be90-85f0769a080a",
    frameWidth: 225,      // Nova širina
@@ -356,7 +356,7 @@ frameWidth: 255,      // Nova širina
 {
     ime: "Black suit",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/zoro80.png?alt=media&token=f29bb6b4-1bcc-4625-a2ca-d71688725722",
-    cijena: 20,
+    cijena: 80,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/zorosprite80.png?alt=media&token=40b78828-4109-42b4-b77d-7dd307e6b66c",
     frameWidth: 244,      // Nova širina
@@ -369,7 +369,7 @@ frameWidth: 255,      // Nova širina
 {
     ime: "Bandaged warrior",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/zoro100.png?alt=media&token=6bc21d64-7f25-450a-a4b9-cb4ecf27bf4c",
-    cijena: 20,
+    cijena: 100,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/zorosprite100.png?alt=media&token=8af73b27-ce20-4c17-a1cc-db2d677cef4a",
      frameWidth: 244,      // Nova širina
@@ -410,7 +410,7 @@ frameWidth: 255,      // Nova širina
 {
     ime: "Yukata Casual",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/sanji45.png?alt=media&token=9a8aa5f1-3861-473b-aa8e-78877f0dbf71",
-    cijena: 20,
+    cijena: 40,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/sanjisprite45.png?alt=media&token=2cb7113c-073e-45b2-a52a-b1c5cc8a4f82",
     frameWidth: 195,      // Nova širina
@@ -423,7 +423,7 @@ frameWidth: 255,      // Nova širina
 {
     ime: "Haloewwn pumpkin",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/sanji60.png?alt=media&token=8415eb9d-adc2-42bb-aca2-f709318f1344",
-    cijena: 20,
+    cijena: 60,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/sanjisprite60.png?alt=media&token=a86d7b45-ebde-47ac-b04c-d783aa46fb7a",
     frameWidth: 158,      // Nova širina
@@ -436,7 +436,7 @@ frameWidth: 255,      // Nova širina
 {
     ime: "Black Suit",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/sanji80.png?alt=media&token=42b207b0-dd9a-4c4a-b01c-e8ec55f9b91a",
-    cijena: 20,
+    cijena: 80,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/sanjisprite80.png?alt=media&token=f543bee9-b8b0-4ad3-896e-23bb871d3ddc",
     frameWidth: 228,      // Nova širina
@@ -449,7 +449,7 @@ frameWidth: 255,      // Nova širina
 {
     ime: "White dress",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/sanji100.png?alt=media&token=09648153-a1eb-4550-8338-faffd3191339",
-    cijena: 20,
+    cijena: 100,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/sanjisprite100.png?alt=media&token=75b3a181-6952-4809-b650-08d77cc16f9c",
     frameWidth: 163,      // Nova širina
@@ -491,7 +491,7 @@ frameWidth: 128,      // Nova širina
 {
     ime: "Athlete gear",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/nami45.png?alt=media&token=119b66e1-9509-4f2b-8b4e-728e392bd794",
-    cijena: 20,
+    cijena: 40,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/namisprite45.png?alt=media&token=e4ca6310-7391-4f68-853b-524297fbcb2a",
 frameWidth: 183,      // Nova širina
@@ -504,7 +504,7 @@ frameWidth: 183,      // Nova širina
 {
     ime: "Wrench mechanic",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/nami60.png?alt=media&token=4cad84cd-4364-47e6-a055-6e9249b3e18a",
-    cijena: 20,
+    cijena: 60,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/namisprite60.png?alt=media&token=58419812-37fc-4eca-a68f-ac869bd26ed2",
     frameWidth: 252,      // Nova širina
@@ -517,7 +517,7 @@ frameWidth: 183,      // Nova širina
 {
     ime: "Pirate queen",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/nami80.png?alt=media&token=840e983b-a5de-4866-9f6f-24bc61518b14",
-    cijena: 20,
+    cijena: 80,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/namisprite80.png?alt=media&token=e729b1ca-d380-4c83-9b8d-d08ea942a5c4",
      frameWidth: 200,      // Nova širina
@@ -530,7 +530,7 @@ frameWidth: 183,      // Nova širina
 {
     ime: "Elegant dress",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/nami100.png?alt=media&token=9c17b5b2-1ba1-4fdc-aaaf-181ac14342e9",
-    cijena: 20,
+    cijena: 100,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/namisprite100.png?alt=media&token=cb1d707e-8566-4ef8-a345-757c571cb622",
   frameWidth: 201,      // Nova širina
@@ -572,7 +572,7 @@ chopper: [
 {
     ime: "Forest Guardian",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/mali45.png?alt=media&token=766bb9ba-a8a4-44dd-b283-853b48ed3a7f",
-    cijena: 20,
+    cijena: 40,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/spritemali45.png?alt=media&token=d465d492-9f6a-4dba-9f6c-83d3f6c01f0e",
      frameWidth: 245,      // Nova širina
@@ -585,7 +585,7 @@ chopper: [
 {
     ime: "Strong deer",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/mali60.png?alt=media&token=2124b712-7dd8-493b-982d-b957f57703aa",
-    cijena: 20,
+    cijena: 60,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/spritemali60.png?alt=media&token=2e07a203-06f8-41ae-8688-822122d3e5d7",
     frameWidth: 188,      // Nova širina
@@ -598,7 +598,7 @@ chopper: [
 {
     ime: "Halloween deer",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/mali80.png?alt=media&token=b45b19c4-dc29-49e5-9ffa-f8f035b73c15",
-    cijena: 20,
+    cijena: 80,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/spritemali80.png?alt=media&token=0a5fdca5-0a8b-4827-a3d0-50b567998010",
     frameWidth: 126,      // Nova širina
@@ -611,7 +611,7 @@ chopper: [
 {
     ime: "Big strong deer",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/mali100.png?alt=media&token=7f774873-4229-4b16-b206-e4b2f735d1fe",
-    cijena: 20,
+    cijena: 100,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/spritemali100.png?alt=media&token=570d6745-64ca-43c7-b839-472618815add",
    frameWidth: 236,      // Nova širina
@@ -653,7 +653,7 @@ usop: [
 {
     ime: "pirate mask",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/usop45.png?alt=media&token=1f01d079-575d-4e87-9701-17beda3b8266",
-    cijena: 20,
+    cijena: 40,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/spriteusop45.png?alt=media&token=40671755-fbf4-4d08-9123-064b0d88ca4a",
     frameWidth: 368,      // Nova širina
@@ -666,7 +666,7 @@ usop: [
 {
     ime: "Red samurai",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/usop60.png?alt=media&token=9dca821b-174f-40d4-93f5-4afb0686470d",
-    cijena: 20,
+    cijena: 60,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/spriteusop60.png?alt=media&token=8cee6cec-736c-4315-89e2-c541269a178e",
    frameWidth: 260,      // Nova širina
@@ -679,7 +679,7 @@ usop: [
 {
     ime: "Haloween ghost",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/usop80.png?alt=media&token=3ec84be8-1991-43e2-af24-1c8c311631da",
-    cijena: 20,
+    cijena: 80,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/spriteusop80.png?alt=media&token=c0636ea2-7c2d-4f10-8317-d4cbe51dd7c3",
       frameWidth: 169,      // Nova širina
@@ -692,7 +692,7 @@ usop: [
 {
     ime: "Knight helmet",
     slika: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/usop100.png?alt=media&token=e501c334-5aef-413a-aa9a-9aaaba24d399",
-    cijena: 20,
+    cijena: 100,
     sprite: {
       url: "https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/spriteusop100.png?alt=media&token=ea2f8389-5600-4e61-955b-a27e8386a06c",
   frameWidth: 347,      // Nova širina
@@ -1005,3 +1005,4 @@ function prikaziKovanice(kolicina) {
     }
   });
 }
+
