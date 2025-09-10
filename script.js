@@ -4,87 +4,38 @@ console.log('Script učitan');
 window.addEventListener('DOMContentLoaded', () => {
   console.log('DOM spreman');
   
-  // FAKE REGISTRACIJA (bez backend poziva)
+  // FAKE REGISTRACIJA
   const formaRegistracija = document.getElementById('forma_registracija');
   if (formaRegistracija) {
     formaRegistracija.addEventListener('submit', e => {
       e.preventDefault();
       console.log('Fake registracija');
-      
-      // Spremi fake user podatke
-      const fakeUserData = {
-        id: 'fake_user_id_123',
-        username: 'Demo korisnik',
-        coins: 50,
-        selectedCharacter: '',
-        ownedOutfits: []
-      };
-      
-      localStorage.setItem('userData', JSON.stringify(fakeUserData));
-      localStorage.setItem('korisnikId', fakeUserData.id);
-      localStorage.setItem('korisnickoIme', fakeUserData.username);
-      localStorage.setItem('kovanice', fakeUserData.coins.toString());
-      
       alert('Registracija uspješna!');
       showPage('odabir');
-      prikaziUsername();
     });
   }
   
-  // FAKE PRIJAVA (bez backend poziva)
+  // FAKE PRIJAVA
   const formaPrijava = document.getElementById('forma_prijava');
   if (formaPrijava) {
     formaPrijava.addEventListener('submit', e => {
       e.preventDefault();
       console.log('Fake prijava');
-      
-      // Učitaj postojeće podatke ili stvori nove
-      let userData = JSON.parse(localStorage.getItem('userData') || '{}');
-      if (!userData.id) {
-        userData = {
-          id: 'fake_user_id_123',
-          username: 'Demo korisnik',
-          coins: 50,
-          selectedCharacter: '',
-          ownedOutfits: []
-        };
-        localStorage.setItem('userData', JSON.stringify(userData));
-      }
-      
-      localStorage.setItem('korisnikId', userData.id);
-      localStorage.setItem('korisnickoIme', userData.username);
-      localStorage.setItem('kovanice', userData.coins.toString());
-      
-      if (userData.selectedCharacter) {
-        localStorage.setItem('odabraniLik', userData.selectedCharacter);
-        showPage('vrijeme');
-      } else {
-        showPage('odabir');
-      }
-      
       alert('Prijava uspješna!');
-      prikaziUsername();
-      prikaziOdabranogLika();
-      prikaziAvatar();
+      showPage('odabir');
     });
   }
   
   // NAVIGACIJA LINKOVI
-  const linkLogin = document.getElementById('link_login');
-  if (linkLogin) {
-    linkLogin.addEventListener('click', e => {
-      e.preventDefault();
-      showPage('prijava');
-    });
-  }
+  document.getElementById('link_login')?.addEventListener('click', e => {
+    e.preventDefault();
+    showPage('prijava');
+  });
   
-  const linkRegistracija = document.getElementById('link_registracija');
-  if (linkRegistracija) {
-    linkRegistracija.addEventListener('click', e => {
-      e.preventDefault();
-      showPage('registracija');
-    });
-  }
+  document.getElementById('link_registracija')?.addEventListener('click', e => {
+    e.preventDefault();
+    showPage('registracija');
+  });
   
   // GUMBOVI
   document.getElementById('gumb_outfit')?.addEventListener('click', () => {
@@ -102,35 +53,11 @@ window.addEventListener('DOMContentLoaded', () => {
   
   document.getElementById('btn_pocni_fokus')?.addEventListener('click', zapocniFokus);
   
-  // ODABIR LIKA (povezano s backendom)
+  // ODABIR LIKA
   document.querySelectorAll('.odabir_kartica').forEach(kartica => {
-    kartica.addEventListener('click', async () => {
+    kartica.addEventListener('click', () => {
       const odabraniLik = kartica.getAttribute('data-lik');
-      console.log('Odabran lik:', odabraniLik);
-      
-      const korisnikId = localStorage.getItem('korisnikId');
-      if (korisnikId && korisnikId !== 'fake_user_id_123') {
-        // Pravi backend poziv
-        try {
-          await fetch('/update-character', {
-            method: 'POST',
-            headers: { 
-              'Content-Type': 'application/json',
-              'user-id': korisnikId
-            },
-            body: JSON.stringify({ selectedCharacter: odabraniLik })
-          });
-        } catch (err) {
-          console.error('Greška backend poziva:', err);
-        }
-      }
-      
-      // Lokalno spremanje
       localStorage.setItem('odabraniLik', odabraniLik);
-      const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-      userData.selectedCharacter = odabraniLik;
-      localStorage.setItem('userData', JSON.stringify(userData));
-      
       prikaziOdabranogLika();
       prikaziAvatar();
       showPage('vrijeme');
@@ -154,10 +81,6 @@ window.addEventListener('DOMContentLoaded', () => {
     if (minute >= 60) {
       minute = 0;
       sati++;
-    }
-    if (sati > 23) {
-      sati = 23;
-      minute = 50;
     }
     azurirajPrikaz();
   });
@@ -184,7 +107,7 @@ window.addEventListener('DOMContentLoaded', () => {
     prikaziUsername();
     prikaziOdabranogLika();
     prikaziAvatar();
-    prikaziKovanice(localStorage.getItem('kovanice') || 50);
+    prikaziKovanice(localStorage.getItem('kovanice') || 0);
   }, 100);
 });
 
@@ -759,94 +682,44 @@ usop: [
 
 };
 
-
 console.log('Script učitan');
 
 // === DOM CONTENT LOADED ===
 window.addEventListener('DOMContentLoaded', () => {
   console.log('DOM spreman');
   
-  // FAKE REGISTRACIJA (bez backend poziva)
+  // FAKE REGISTRACIJA
   const formaRegistracija = document.getElementById('forma_registracija');
   if (formaRegistracija) {
     formaRegistracija.addEventListener('submit', e => {
       e.preventDefault();
       console.log('Fake registracija');
-      
-      // Spremi fake user podatke
-      const fakeUserData = {
-        id: 'fake_user_id_123',
-        username: 'Demo korisnik',
-        coins: 50,
-        selectedCharacter: '',
-        ownedOutfits: []
-      };
-      
-      localStorage.setItem('userData', JSON.stringify(fakeUserData));
-      localStorage.setItem('korisnikId', fakeUserData.id);
-      localStorage.setItem('korisnickoIme', fakeUserData.username);
-      localStorage.setItem('kovanice', fakeUserData.coins.toString());
-      
       alert('Registracija uspješna!');
       showPage('odabir');
-      prikaziUsername();
     });
   }
   
-  // FAKE PRIJAVA (bez backend poziva)
+  // FAKE PRIJAVA
   const formaPrijava = document.getElementById('forma_prijava');
   if (formaPrijava) {
     formaPrijava.addEventListener('submit', e => {
       e.preventDefault();
       console.log('Fake prijava');
-      
-      // Učitaj postojeće podatke ili stvori nove
-      let userData = JSON.parse(localStorage.getItem('userData') || '{}');
-      if (!userData.id) {
-        userData = {
-          id: 'fake_user_id_123',
-          username: 'Demo korisnik',
-          coins: 50,
-          selectedCharacter: '',
-          ownedOutfits: []
-        };
-        localStorage.setItem('userData', JSON.stringify(userData));
-      }
-      
-      localStorage.setItem('korisnikId', userData.id);
-      localStorage.setItem('korisnickoIme', userData.username);
-      localStorage.setItem('kovanice', userData.coins.toString());
-      
-      if (userData.selectedCharacter) {
-        localStorage.setItem('odabraniLik', userData.selectedCharacter);
-        showPage('vrijeme');
-      } else {
-        showPage('odabir');
-      }
-      
       alert('Prijava uspješna!');
-      prikaziUsername();
-      prikaziOdabranogLika();
-      prikaziAvatar();
+      showPage('odabir');
     });
   }
   
   // NAVIGACIJA LINKOVI
-  const linkLogin = document.getElementById('link_login');
-  if (linkLogin) {
-    linkLogin.addEventListener('click', e => {
-      e.preventDefault();
-      showPage('prijava');
-    });
-  }
+  document.getElementById('link_login')?.addEventListener('click', e => {
+    e.preventDefault();
+    showPage('prijava');
+  });
   
-  const linkRegistracija = document.getElementById('link_registracija');
-  if (linkRegistracija) {
-    linkRegistracija.addEventListener('click', e => {
-      e.preventDefault();
-      showPage('registracija');
-    });
-  }
+  document.getElementById('link_registracija')?.addEventListener('click', e => {
+    e.preventDefault();
+    showPage('registracija');
+  });
   
   // GUMBOVI
   document.getElementById('gumb_outfit')?.addEventListener('click', () => {
@@ -864,35 +737,11 @@ window.addEventListener('DOMContentLoaded', () => {
   
   document.getElementById('btn_pocni_fokus')?.addEventListener('click', zapocniFokus);
   
-  // ODABIR LIKA (povezano s backendom)
+  // ODABIR LIKA
   document.querySelectorAll('.odabir_kartica').forEach(kartica => {
-    kartica.addEventListener('click', async () => {
+    kartica.addEventListener('click', () => {
       const odabraniLik = kartica.getAttribute('data-lik');
-      console.log('Odabran lik:', odabraniLik);
-      
-      const korisnikId = localStorage.getItem('korisnikId');
-      if (korisnikId && korisnikId !== 'fake_user_id_123') {
-        // Pravi backend poziv
-        try {
-          await fetch('/update-character', {
-            method: 'POST',
-            headers: { 
-              'Content-Type': 'application/json',
-              'user-id': korisnikId
-            },
-            body: JSON.stringify({ selectedCharacter: odabraniLik })
-          });
-        } catch (err) {
-          console.error('Greška backend poziva:', err);
-        }
-      }
-      
-      // Lokalno spremanje
       localStorage.setItem('odabraniLik', odabraniLik);
-      const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-      userData.selectedCharacter = odabraniLik;
-      localStorage.setItem('userData', JSON.stringify(userData));
-      
       prikaziOdabranogLika();
       prikaziAvatar();
       showPage('vrijeme');
@@ -916,10 +765,6 @@ window.addEventListener('DOMContentLoaded', () => {
     if (minute >= 60) {
       minute = 0;
       sati++;
-    }
-    if (sati > 23) {
-      sati = 23;
-      minute = 50;
     }
     azurirajPrikaz();
   });
@@ -946,6 +791,7 @@ window.addEventListener('DOMContentLoaded', () => {
     prikaziUsername();
     prikaziOdabranogLika();
     prikaziAvatar();
-    prikaziKovanice(localStorage.getItem('kovanice') || 50);
+    prikaziKovanice(localStorage.getItem('kovanice') || 0);
   }, 100);
 });
+
