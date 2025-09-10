@@ -766,6 +766,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
     azurirajPrikaz();
   });
+  
 
   document.getElementById('dolje_vrijeme')?.addEventListener('click', () => {
     minute -= 10;
@@ -792,4 +793,60 @@ window.addEventListener('DOMContentLoaded', () => {
     prikaziKovanice(localStorage.getItem('kovanice') || 0);
   }, 100);
 });
+
+function prikaziOutfiteZaTrenutnogLika() {
+  const odabraniLik = localStorage.getItem('odabraniLik');
+  if (!odabraniLik || !OUTFITI[odabraniLik]) {
+    console.log('Nema odabranog lika ili outfita');
+    return;
+  }
+
+  const kontejner = document.getElementById('outfit_kontejner');
+  if (!kontejner) return;
+
+  kontejner.innerHTML = ''; // Očisti postojeće outfite
+
+  OUTFITI[odabraniLik].forEach((outfit, index) => {
+    const outfitDiv = document.createElement('div');
+    outfitDiv.className = 'outfit_kartica';
+    outfitDiv.innerHTML = `
+      <img src="${outfit.slika}" alt="${outfit.ime}">
+      <h3>${outfit.ime}</h3>
+      <p>Cijena: ${outfit.cijena} kovanica</p>
+      <button onclick="kupiOutfit('${odabraniLik}', ${index})">Kupi</button>
+    `;
+    kontejner.appendChild(outfitDiv);
+  });
+}
+
+// POKRENI SPRITE ANIMACIJU
+function pokreniSpriteAnimaciju() {
+  const spriteElement = document.getElementById('fokus_sprite');
+  if (!spriteElement) return;
+  
+  const odabraniLik = localStorage.getItem('odabraniLik');
+  if (!odabraniLik) return;
+  
+  // Provjeri ima li trenutni outfit
+  const trenutniOutfitStr = localStorage.getItem('trenutniOutfit');
+  let spriteData;
+  
+  if (trenutniOutfitStr) {
+    const trenutniOutfit = JSON.parse(trenutniOutfitStr);
+    if (trenutniOutfit.lik === odabraniLik) {
+      spriteData = OUTFITI[odabraniLik][trenutniOutfit.outfitIndex].sprite;
+    } else {
+      spriteData = LIKOVI[odabraniLik].defaultSprite;
+    }
+  } else {
+    spriteData = LIKOVI[odabraniLik].defaultSprite;
+  }
+  
+  // Postavi sprite
+  spriteElement.style.backgroundImage = `url(${spriteData.url})`;
+  spriteElement.style.width = `${spriteData.frameWidth}px`;
+  spriteElement.style.height = `${spriteData.frameHeight}px`;
+  spriteElement.className = `sprite-animacija ${spriteData.cssClass}`;
+}
+
 
