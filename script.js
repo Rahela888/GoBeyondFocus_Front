@@ -52,44 +52,42 @@ if (formaRegistracija) {
 }
 
 
-  // FAKE PRIJAVA  
-  const formaPrijava = document.getElementById('forma_prijava');
  // FAKE PRIJAVA  
-const formaPrijava = document.getElementById('forma_prijava');
-if (formaPrijava) {
-  console.log('Login forma pronađena');
-  formaPrijava.addEventListener('submit', e => {
-    e.preventDefault();
-    console.log('Fake login submit');
-    
-    let userData = JSON.parse(localStorage.getItem('userData') || '{}');
-    if (!userData.id) {
-      userData = {
-        id: 'fake_user_123',
-        username: 'Demo korisnik',
-        coins: 50,
-        selectedCharacter: '',
-        ownedOutfits: []
-      };
-      localStorage.setItem('userData', JSON.stringify(userData));
-    }
-    
-    localStorage.setItem('korisnikId', userData.id);
-    localStorage.setItem('korisnickoIme', userData.username);
-    localStorage.setItem('kovanice', userData.coins.toString());
-    
-    // PRIKAZI ALERT PRVO
-    alert('Prijava uspješna!');
-    
-    // ZATIM IDI NA ODABIR STRANICU
-    showPage('odabir');
-    
-    // I NA KRAJU AŽURIRAJ PRIKAZE
-    prikaziUsername();
-    prikaziOdabranogLika(); 
-    prikaziAvatar();
-  });
-}
+  const formaPrijava = document.getElementById('forma_prijava');
+  if (formaPrijava) {
+    console.log('Login forma pronađena');
+    formaPrijava.addEventListener('submit', e => {
+      e.preventDefault();
+      console.log('Fake login submit');
+      
+      
+      let userData = JSON.parse(localStorage.getItem('userData') || '{}');
+      if (!userData.id) {
+        userData = {
+          id: 'fake_user_123',
+          username: 'Demo korisnik',
+          coins: 50,
+          selectedCharacter: '',
+          ownedOutfits: []
+        };
+        localStorage.setItem('userData', JSON.stringify(userData));
+      }
+      
+      localStorage.setItem('korisnikId', userData.id);
+      localStorage.setItem('korisnickoIme', userData.username);
+      localStorage.setItem('kovanice', userData.coins.toString());
+
+       alert('Prijava uspješna!');
+     
+        showPage('odabir');
+      
+      
+     
+      prikaziUsername();
+      prikaziOdabranogLika();
+      prikaziAvatar();
+    });
+  }
 
 
   // LOGIN/REGISTRACIJA LINKOVI
@@ -1176,6 +1174,7 @@ function prikaziKovanice(kolicina) {
     }
   });
 }
+
 
 
 
