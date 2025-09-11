@@ -1,16 +1,15 @@
 console.log('Script učitan');
 
-// === DOM CONTENT LOADED ===
+
 window.addEventListener('DOMContentLoaded', () => {
   console.log('DOM spreman');
   
-  // Provjeri postoje li stranice
+  
   const stranice = document.querySelectorAll('.page');
   console.log('Broj stranica:', stranice.length);
   stranice.forEach(s => console.log('Stranica ID:', s.id));
 
-  // FAKE REGISTRACIJA - JEDNOSTAVNO
-// FAKE REGISTRACIJA - KORISTI BACKEND
+  // FAKE REGISTRACIJA 
 const formaRegistracija = document.getElementById('forma_registracija');
 if (formaRegistracija) {
   formaRegistracija.addEventListener('submit', async e => {
@@ -53,7 +52,7 @@ if (formaRegistracija) {
 }
 
 
-  // FAKE PRIJAVA - JEDNOSTAVNO  
+  // FAKE PRIJAVA  
   const formaPrijava = document.getElementById('forma_prijava');
   if (formaPrijava) {
     console.log('Login forma pronađena');
@@ -61,7 +60,7 @@ if (formaRegistracija) {
       e.preventDefault();
       console.log('Fake login submit');
       
-      // Učitaj postojeće podatke ili stvori nove
+      
       let userData = JSON.parse(localStorage.getItem('userData') || '{}');
       if (!userData.id) {
         userData = {
@@ -109,7 +108,7 @@ if (formaRegistracija) {
     });
   }
 
-  // NAVIGACIJA GUMBOVI
+  
   const gumbOutfit = document.getElementById('gumb_outfit');
   if (gumbOutfit) {
     gumbOutfit.addEventListener('click', () => {
@@ -139,7 +138,7 @@ if (formaRegistracija) {
     btnFokus.addEventListener('click', zapocniFokus);
   }
 
-  // ODABIR LIKA - S BACKEND POZIVOM
+  
   document.querySelectorAll('.odabir_kartica').forEach(kartica => {
     kartica.addEventListener('click', async () => {
       const odabraniLik = kartica.getAttribute('data-lik');
@@ -166,7 +165,7 @@ if (formaRegistracija) {
         }
       }
       
-      // LOKALNO SPREMANJE
+     
       localStorage.setItem('odabraniLik', odabraniLik);
       const userData = JSON.parse(localStorage.getItem('userData') || '{}');
       userData.selectedCharacter = odabraniLik;
@@ -178,7 +177,7 @@ if (formaRegistracija) {
     });
   });
 
-  // KONTROLE VREMENA
+  
   let sati = 0;
   let minute = 0;
 
@@ -226,7 +225,7 @@ if (formaRegistracija) {
 
   azurirajPrikaz();
 
-  // POČETNA LOGIKA
+ 
   setTimeout(() => {
     showPage('registracija');
     prikaziUsername();
@@ -805,7 +804,7 @@ usop: [
 
 };
 
-// === FUNKCIJE IZVAN DOM-a ===
+
 function showPage(pageId) {
   console.log('Prikazujem stranicu:', pageId);
   document.querySelectorAll('.page').forEach(el => {
@@ -858,7 +857,7 @@ async function zapocniFokus() {
 
     showPage('fokus');
     
-    // PRIKAŽI SPRITE ANIMACIJU - KORISTI TRENUTNI OUTFIT
+    
     const userData = JSON.parse(localStorage.getItem('userData') || '{}');
     const odabraniLik = userData.selectedCharacter;
 
@@ -876,7 +875,7 @@ async function zapocniFokus() {
       }
     }, 100);
     
-    // POKRENI BACKEND TIMER - PRATI STATUS
+    
     startBackendTimer();
     
   } catch (err) {
@@ -885,12 +884,12 @@ async function zapocniFokus() {
   }
 }
 
-// BACKEND TIMER
+
 function startBackendTimer() {
   const fokusVrijeme = document.getElementById('fokus_vrijeme');
   const korisnikId = localStorage.getItem('korisnikId');
   
-  // Provjeri status svakih 10 sekundi
+  
   const statusInterval = setInterval(async () => {
     try {
       const response = await fetch('https://gobeyondfocus-back-3.onrender.com/focus-status', {
@@ -925,7 +924,7 @@ function startBackendTimer() {
   }, 10000); // Provjeri svakih 10 sekundi
 }
 
-// ZAVRŠI FOKUS
+
 async function endBackendFocus() {
   const korisnikId = localStorage.getItem('korisnikId');
   
@@ -941,16 +940,14 @@ async function endBackendFocus() {
     if (response.ok) {
       const data = await response.json();
       
-      // AŽURIRAJ LOKALNE KOVANICE
+      
       localStorage.setItem('kovanice', data.totalCoins);
       
-      // PRIKAŽI REZULTATE
-      alert(`🎉 Fokus završen! 
-⏰ Vrijeme provedeno: ${data.timeSpent} minuta
-💰 Zaradili ste: ${data.coinsEarned} kovanica
-🪙 Ukupno kovanica: ${data.totalCoins}`);
       
-      // VRATI NA VRIJEME STRANICU
+alert(` Fokus završen! 
+ Vrijeme provedeno: ${data.timeSpent} minuta
+Zaradili ste: ${data.coinsEarned} kovanica
+Ukupno kovanica: ${data.totalCoins}`);
       showPage('vrijeme');
       prikaziKovanice(data.totalCoins);
     } else {
@@ -963,8 +960,6 @@ async function endBackendFocus() {
     showPage('vrijeme');
   }
 }
-
-// KUPOVINA OUTFITA - BACKEND
 async function buyOutfit(outfitName, price) {
   const korisnikId = localStorage.getItem('korisnikId');
   if (!korisnikId) {
@@ -972,7 +967,6 @@ async function buyOutfit(outfitName, price) {
     return;
   }
 
-  // ZA FAKE KORISNIKA - LOKALNA SIMULACIJA
   if (korisnikId === 'fake_user_123') {
     const kovanice = parseInt(localStorage.getItem('kovanice') || '0');
     
@@ -981,11 +975,11 @@ async function buyOutfit(outfitName, price) {
       return;
     }
     
-    // Oduzmi kovanice
+    
     const noviSaldo = kovanice - price;
     localStorage.setItem('kovanice', noviSaldo.toString());
     
-    // Dodaj outfit
+   
     const userData = JSON.parse(localStorage.getItem('userData') || '{}');
     if (!userData.ownedOutfits.includes(outfitName)) {
       userData.ownedOutfits.push(outfitName);
@@ -1099,12 +1093,11 @@ function prikaziOutfiteZaTrenutnogLika() {
 function getCurrentOutfitSprite(character) {
   const equippedOutfit = localStorage.getItem('equippedOutfit');
   
-  // Ako je default ili nema opremljen outfit
+  
   if (!equippedOutfit || equippedOutfit === 'default') {
     return LIKOVI[character]?.defaultSprite;
   }
   
-  // Pronađi sprite za opremljen outfit
   const characterOutfits = OUTFITI[character] || [];
   const outfit = characterOutfits.find(o => o.ime === equippedOutfit);
   
@@ -1182,6 +1175,7 @@ function prikaziKovanice(kolicina) {
     }
   });
 }
+
 
 
 
