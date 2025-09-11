@@ -824,7 +824,7 @@ async function zapocniFokus() {
   }
 
   try {
-    const response = await fetch('/api/start-focus', {
+    const response = await fetch('https://gobeyondfocus-back-3.onrender.com/start-focus', {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -876,7 +876,7 @@ function startBackendTimer() {
   // Provjeri status svakih 10 sekundi
   const statusInterval = setInterval(async () => {
     try {
-      const response = await fetch('https://gobeyondfocus-back-2.onrender.com/focus-status', {
+      const response = await fetch('https://gobeyondfocus-back-3.onrender.com/focus-status', {
         method: 'GET',
         headers: { 'user-id': korisnikId }
       });
@@ -913,7 +913,7 @@ async function endBackendFocus() {
   const korisnikId = localStorage.getItem('korisnikId');
   
   try {
-    const response = await fetch('https://gobeyondfocus-back-2.onrender.com/end-focus', {
+    const response = await fetch('https://gobeyondfocus-back-3.onrender.com/end-focus', {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -956,7 +956,7 @@ async function buyOutfit(outfitName, price) {
   }
 
   try {
-    const response = await fetch('https://gobeyondfocus-back-2.onrender.com/buy-outfit', {
+    const response = await fetch('https://gobeyondfocus-back-3.onrender.com/buy-outfit', {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -1142,4 +1142,5 @@ function prikaziKovanice(kolicina) {
     }
   });
 }
+
 
