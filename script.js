@@ -10,31 +10,48 @@ window.addEventListener('DOMContentLoaded', () => {
   stranice.forEach(s => console.log('Stranica ID:', s.id));
 
   // FAKE REGISTRACIJA - JEDNOSTAVNO
-  const formaRegistracija = document.getElementById('forma_registracija');
-  if (formaRegistracija) {
-    console.log('Registracija forma pronađena');
-    formaRegistracija.addEventListener('submit', e => {
-      e.preventDefault();
-      console.log('Fake registracija submit');
+// FAKE REGISTRACIJA - KORISTI BACKEND
+const formaRegistracija = document.getElementById('forma_registracija');
+if (formaRegistracija) {
+  formaRegistracija.addEventListener('submit', async e => {
+    e.preventDefault();
+    
+    try {
+      const response = await fetch('https://gobeyondfocus-back-3.onrender.com/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          email: `demo${Math.random().toString(36).substring(7)}@test.com`, 
+          username: 'Demo korisnik', 
+          password: 'demo123' 
+        })
+      });
       
-      // Spremi fake user podatke
-      const fakeUserData = {
-        id: 'fake_user_123',
-        username: 'Demo korisnik',
-        coins: 50,
-        selectedCharacter: '',
-        ownedOutfits: []
-      };
-      
-      localStorage.setItem('userData', JSON.stringify(fakeUserData));
-      localStorage.setItem('korisnikId', fakeUserData.id);
-      localStorage.setItem('korisnickoIme', fakeUserData.username);
-      localStorage.setItem('kovanice', fakeUserData.coins.toString());
-      
-      alert('Registracija uspješna!');
-      showPage('odabir');
-    });
-  }
+      if (response.ok) {
+        const data = await response.json();
+        const userData = {
+          id: data.korisnik.id,
+          username: data.korisnik.username,
+          coins: data.korisnik.coins,
+          selectedCharacter: '',
+          ownedOutfits: []
+        };
+        
+        localStorage.setItem('userData', JSON.stringify(userData));
+        localStorage.setItem('korisnikId', userData.id);
+        localStorage.setItem('korisnickoIme', userData.username);
+        localStorage.setItem('kovanice', userData.coins.toString());
+        
+        alert('Registracija uspješna!');
+        showPage('odabir');
+      }
+    } catch (err) {
+      console.error('Greška registracije:', err);
+      alert('Greška registracije!');
+    }
+  });
+}
+
 
   // FAKE PRIJAVA - JEDNOSTAVNO  
   const formaPrijava = document.getElementById('forma_prijava');
@@ -955,6 +972,33 @@ async function buyOutfit(outfitName, price) {
     return;
   }
 
+  // ZA FAKE KORISNIKA - LOKALNA SIMULACIJA
+  if (korisnikId === 'fake_user_123') {
+    const kovanice = parseInt(localStorage.getItem('kovanice') || '0');
+    
+    if (kovanice < price) {
+      alert('Nedovoljno kovanica!');
+      return;
+    }
+    
+    // Oduzmi kovanice
+    const noviSaldo = kovanice - price;
+    localStorage.setItem('kovanice', noviSaldo.toString());
+    
+    // Dodaj outfit
+    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+    if (!userData.ownedOutfits.includes(outfitName)) {
+      userData.ownedOutfits.push(outfitName);
+      localStorage.setItem('userData', JSON.stringify(userData));
+    }
+    
+    alert('Outfit kupljen uspješno!');
+    prikaziOutfiteZaTrenutnogLika();
+    prikaziKovanice(noviSaldo);
+    return;
+  }
+
+ 
   try {
     const response = await fetch('https://gobeyondfocus-back-3.onrender.com/buy-outfit', {
       method: 'POST',
@@ -967,11 +1011,8 @@ async function buyOutfit(outfitName, price) {
     
     if (response.ok) {
       const result = await response.json();
-      
-      // AŽURIRAJ LOKALNE PODATKE
       localStorage.setItem('kovanice', result.coins);
       
-      // AŽURIRAJ userData S NOVIM OUTFITIMA
       const userData = JSON.parse(localStorage.getItem('userData') || '{}');
       if (!userData.ownedOutfits.includes(outfitName)) {
         userData.ownedOutfits.push(outfitName);
@@ -979,8 +1020,6 @@ async function buyOutfit(outfitName, price) {
       }
       
       alert(result.message);
-      
-      // OSVJEŽI PRIKAZ
       prikaziOutfiteZaTrenutnogLika();
       prikaziKovanice(result.coins);
       
@@ -993,6 +1032,7 @@ async function buyOutfit(outfitName, price) {
     alert('Greška pri kupovini outfita');
   }
 }
+
 
 function prikaziOutfiteZaTrenutnogLika() {
   const wrapper = document.getElementById('outfit_cards_wrapper');
@@ -1142,5 +1182,6 @@ function prikaziKovanice(kolicina) {
     }
   });
 }
+
 
 
