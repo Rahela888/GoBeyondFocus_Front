@@ -77,12 +77,9 @@ if (formaRegistracija) {
       localStorage.setItem('korisnickoIme', userData.username);
       localStorage.setItem('kovanice', userData.coins.toString());
       
-      if (userData.selectedCharacter) {
-        localStorage.setItem('odabraniLik', userData.selectedCharacter);
-        showPage('vrijeme');
-      } else {
+     
         showPage('odabir');
-      }
+      
       
       alert('Prijava uspješna!');
       prikaziUsername();
@@ -1175,6 +1172,7 @@ function prikaziKovanice(kolicina) {
     }
   });
 }
+
 
 
 
