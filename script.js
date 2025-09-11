@@ -4,70 +4,167 @@ console.log('Script učitan');
 window.addEventListener('DOMContentLoaded', () => {
   console.log('DOM spreman');
   
-  // FAKE REGISTRACIJA
+  // Provjeri postoje li stranice
+  const stranice = document.querySelectorAll('.page');
+  console.log('Broj stranica:', stranice.length);
+  stranice.forEach(s => console.log('Stranica ID:', s.id));
+
+  // FAKE REGISTRACIJA - JEDNOSTAVNO
   const formaRegistracija = document.getElementById('forma_registracija');
   if (formaRegistracija) {
+    console.log('Registracija forma pronađena');
     formaRegistracija.addEventListener('submit', e => {
       e.preventDefault();
-      console.log('Fake registracija');
+      console.log('Fake registracija submit');
+      
+      // Spremi fake user podatke
+      const fakeUserData = {
+        id: 'fake_user_123',
+        username: 'Demo korisnik',
+        coins: 50,
+        selectedCharacter: '',
+        ownedOutfits: []
+      };
+      
+      localStorage.setItem('userData', JSON.stringify(fakeUserData));
+      localStorage.setItem('korisnikId', fakeUserData.id);
+      localStorage.setItem('korisnickoIme', fakeUserData.username);
+      localStorage.setItem('kovanice', fakeUserData.coins.toString());
+      
       alert('Registracija uspješna!');
       showPage('odabir');
     });
   }
-  
-  // FAKE PRIJAVA
+
+  // FAKE PRIJAVA - JEDNOSTAVNO  
   const formaPrijava = document.getElementById('forma_prijava');
   if (formaPrijava) {
+    console.log('Login forma pronađena');
     formaPrijava.addEventListener('submit', e => {
       e.preventDefault();
-      console.log('Fake prijava');
+      console.log('Fake login submit');
+      
+      // Učitaj postojeće podatke ili stvori nove
+      let userData = JSON.parse(localStorage.getItem('userData') || '{}');
+      if (!userData.id) {
+        userData = {
+          id: 'fake_user_123',
+          username: 'Demo korisnik',
+          coins: 50,
+          selectedCharacter: '',
+          ownedOutfits: []
+        };
+        localStorage.setItem('userData', JSON.stringify(userData));
+      }
+      
+      localStorage.setItem('korisnikId', userData.id);
+      localStorage.setItem('korisnickoIme', userData.username);
+      localStorage.setItem('kovanice', userData.coins.toString());
+      
+      if (userData.selectedCharacter) {
+        localStorage.setItem('odabraniLik', userData.selectedCharacter);
+        showPage('vrijeme');
+      } else {
+        showPage('odabir');
+      }
+      
       alert('Prijava uspješna!');
-      showPage('odabir');
+      prikaziUsername();
+      prikaziOdabranogLika();
+      prikaziAvatar();
     });
   }
-  
-  // NAVIGACIJA LINKOVI
-  document.getElementById('link_login')?.addEventListener('click', e => {
-    e.preventDefault();
-    showPage('prijava');
-  });
-  
-  document.getElementById('link_registracija')?.addEventListener('click', e => {
-    e.preventDefault();
-    showPage('registracija');
-  });
-  
-  // GUMBOVI
-  document.getElementById('gumb_outfit')?.addEventListener('click', () => {
-    showPage('outfit');
-    prikaziOutfiteZaTrenutnogLika();
-  });
-  
-  document.getElementById('gumb_vrijeme')?.addEventListener('click', () => {
-    showPage('vrijeme');
-  });
-  
-  document.getElementById('gumb_vrijeme_outfit')?.addEventListener('click', () => {
-    showPage('vrijeme');
-  });
-  
-  document.getElementById('btn_pocni_fokus')?.addEventListener('click', zapocniFokus);
-  
-  // ODABIR LIKA
+
+  // LOGIN/REGISTRACIJA LINKOVI
+  const linkLogin = document.getElementById('link_login');
+  if (linkLogin) {
+    linkLogin.addEventListener('click', e => {
+      e.preventDefault();
+      showPage('prijava');
+    });
+  }
+
+  const linkRegistracija = document.getElementById('link_registracija');
+  if (linkRegistracija) {
+    linkRegistracija.addEventListener('click', e => {
+      e.preventDefault();
+      showPage('registracija');
+    });
+  }
+
+  // NAVIGACIJA GUMBOVI
+  const gumbOutfit = document.getElementById('gumb_outfit');
+  if (gumbOutfit) {
+    gumbOutfit.addEventListener('click', () => {
+      showPage('outfit');
+      prikaziOutfiteZaTrenutnogLika();
+      prikaziAvatar();
+      prikaziUsername();
+    });
+  }
+
+  const gumbVrijeme = document.getElementById('gumb_vrijeme');
+  if (gumbVrijeme) {
+    gumbVrijeme.addEventListener('click', () => {
+      showPage('vrijeme');
+    });
+  }
+
+  const gumbVrijemeOutfit = document.getElementById('gumb_vrijeme_outfit');
+  if (gumbVrijemeOutfit) {
+    gumbVrijemeOutfit.addEventListener('click', () => {
+      showPage('vrijeme');
+    });
+  }
+
+  const btnFokus = document.getElementById('btn_pocni_fokus');
+  if (btnFokus) {
+    btnFokus.addEventListener('click', zapocniFokus);
+  }
+
+  // ODABIR LIKA - S BACKEND POZIVOM
   document.querySelectorAll('.odabir_kartica').forEach(kartica => {
-    kartica.addEventListener('click', () => {
+    kartica.addEventListener('click', async () => {
       const odabraniLik = kartica.getAttribute('data-lik');
+      console.log('KLIK NA KARTICU!', odabraniLik);
+      
+      if (!odabraniLik || !LIKOVI[odabraniLik]) {
+        console.error('Lik ne postoji:', odabraniLik);
+        return;
+      }
+      
+      const korisnikId = localStorage.getItem('korisnikId');
+      if (korisnikId && korisnikId !== 'fake_user_123') {
+        try {
+          await fetch('https://gobeyondfocus-back-2.onrender.com/update-character', {
+            method: 'POST',
+            headers: { 
+              'Content-Type': 'application/json',
+              'user-id': korisnikId
+            },
+            body: JSON.stringify({ selectedCharacter: odabraniLik })
+          });
+        } catch (err) {
+          console.error('Greška backend poziva:', err);
+        }
+      }
+      
+      // LOKALNO SPREMANJE
       localStorage.setItem('odabraniLik', odabraniLik);
+      const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+      userData.selectedCharacter = odabraniLik;
+      localStorage.setItem('userData', JSON.stringify(userData));
+      
       prikaziOdabranogLika();
       prikaziAvatar();
       showPage('vrijeme');
     });
   });
-  
-  // VRIJEME KONTROLE
+
+  // KONTROLE VREMENA
   let sati = 0;
   let minute = 0;
-  
+
   function azurirajPrikaz() {
     const prikaz = document.getElementById('vrijeme_prikaz');
     if (!prikaz) return;
@@ -75,42 +172,51 @@ window.addEventListener('DOMContentLoaded', () => {
     const minStr = minute.toString().padStart(2, '0');
     prikaz.textContent = `${satStr}:${minStr}`;
   }
-  
-  document.getElementById('gore_vrijeme')?.addEventListener('click', () => {
-    minute += 10;
-    if (minute >= 60) {
-      minute = 0;
-      sati++;
-    }
-    azurirajPrikaz();
-  });
-  
-  document.getElementById('dolje_vrijeme')?.addEventListener('click', () => {
-    minute -= 10;
-    if (minute < 0) {
-      if (sati > 0) {
-        sati--;
-        minute = 50;
-      } else {
-        sati = 0;
+
+  const goreDugme = document.getElementById('gore_vrijeme');
+  const doljeDugme = document.getElementById('dolje_vrijeme');
+
+  if (goreDugme) {
+    goreDugme.addEventListener('click', () => {
+      minute += 10;
+      if (minute >= 60) {
         minute = 0;
+        sati++;
       }
-    }
-    azurirajPrikaz();
-  });
-  
+      if (sati > 23) {
+        sati = 23;
+        minute = 50;
+      }
+      azurirajPrikaz();
+    });
+  }
+
+  if (doljeDugme) {
+    doljeDugme.addEventListener('click', () => {
+      minute -= 10;
+      if (minute < 0) {
+        if (sati > 0) {
+          sati--;
+          minute = 50;
+        } else {
+          sati = 0;
+          minute = 0;
+        }
+      }
+      azurirajPrikaz();
+    });
+  }
+
   azurirajPrikaz();
-  
-  // POČETNI PRIKAZ
+
+  // POČETNA LOGIKA
   setTimeout(() => {
     showPage('registracija');
     prikaziUsername();
     prikaziOdabranogLika();
     prikaziAvatar();
-    prikaziKovanice(localStorage.getItem('kovanice') || 0);
   }, 100);
 });
-
 
 const LIKOVI = {
   luffy: {
@@ -682,116 +788,357 @@ usop: [
 
 };
 
-console.log('Script učitan');
+// === FUNKCIJE IZVAN DOM-a ===
+function showPage(pageId) {
+  console.log('Prikazujem stranicu:', pageId);
+  document.querySelectorAll('.page').forEach(el => {
+    el.classList.remove('visible');
+  });
+  
+  const pageToShow = document.getElementById(pageId);
+  if (pageToShow) {
+    pageToShow.classList.add('visible');
+    console.log('Stranica prikazana:', pageId);
+  }
+  
+  const kovanice = localStorage.getItem('kovanice') || 0;
+  prikaziKovanice(kovanice);
+}
 
-// === DOM CONTENT LOADED ===
-window.addEventListener('DOMContentLoaded', () => {
-  console.log('DOM spreman');
+// ZAPOCNI FOKUS - BACKEND
+async function zapocniFokus() {
+  const prikaz = document.getElementById('vrijeme_prikaz');
+  const [satStr, minStr] = prikaz.textContent.split(':');
+  const totalMinutes = parseInt(satStr, 10) * 60 + parseInt(minStr, 10);
   
-  // FAKE REGISTRACIJA
-  const formaRegistracija = document.getElementById('forma_registracija');
-  if (formaRegistracija) {
-    formaRegistracija.addEventListener('submit', e => {
-      e.preventDefault();
-      console.log('Fake registracija');
-      alert('Registracija uspješna!');
-      showPage('odabir');
-    });
+  if (totalMinutes <= 0) {
+    alert('Postavite vrijeme fokusa!');
+    return;
   }
-  
-  // FAKE PRIJAVA
-  const formaPrijava = document.getElementById('forma_prijava');
-  if (formaPrijava) {
-    formaPrijava.addEventListener('submit', e => {
-      e.preventDefault();
-      console.log('Fake prijava');
-      alert('Prijava uspješna!');
-      showPage('odabir');
-    });
-  }
-  
-  // NAVIGACIJA LINKOVI
-  document.getElementById('link_login')?.addEventListener('click', e => {
-    e.preventDefault();
+
+  const korisnikId = localStorage.getItem('korisnikId');
+  if (!korisnikId) {
+    alert('Molimo prijavite se ponovno!');
     showPage('prijava');
-  });
-  
-  document.getElementById('link_registracija')?.addEventListener('click', e => {
-    e.preventDefault();
-    showPage('registracija');
-  });
-  
-  // GUMBOVI
-  document.getElementById('gumb_outfit')?.addEventListener('click', () => {
-    showPage('outfit');
-    prikaziOutfiteZaTrenutnogLika();
-  });
-  
-  document.getElementById('gumb_vrijeme')?.addEventListener('click', () => {
-    showPage('vrijeme');
-  });
-  
-  document.getElementById('gumb_vrijeme_outfit')?.addEventListener('click', () => {
-    showPage('vrijeme');
-  });
-  
-  document.getElementById('btn_pocni_fokus')?.addEventListener('click', zapocniFokus);
-  
-  // ODABIR LIKA
-  document.querySelectorAll('.odabir_kartica').forEach(kartica => {
-    kartica.addEventListener('click', () => {
-      const odabraniLik = kartica.getAttribute('data-lik');
-      localStorage.setItem('odabraniLik', odabraniLik);
-      prikaziOdabranogLika();
-      prikaziAvatar();
-      showPage('vrijeme');
+    return;
+  }
+
+  try {
+    const response = await fetch('https://gobeyondfocus-back-2.onrender.com/start-focus', {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'user-id': korisnikId
+      },
+      body: JSON.stringify({ minutes: totalMinutes })
     });
-  });
+
+    if (!response.ok) {
+      const error = await response.text();
+      alert('Greška pokretanja fokusa: ' + error);
+      return;
+    }
+
+    showPage('fokus');
+    
+    // PRIKAŽI SPRITE ANIMACIJU - KORISTI TRENUTNI OUTFIT
+    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+    const odabraniLik = userData.selectedCharacter;
+
+    setTimeout(() => {
+      const currentSprite = getCurrentOutfitSprite(odabraniLik);
+      if (currentSprite) {
+        animateSprite(
+          'fokus_sprite', 
+          currentSprite.url,
+          currentSprite.frameWidth,
+          currentSprite.frameHeight,
+          currentSprite.frameCount,
+          currentSprite.frameDuration
+        );
+      }
+    }, 100);
+    
+    // POKRENI BACKEND TIMER - PRATI STATUS
+    startBackendTimer();
+    
+  } catch (err) {
+    console.error('Greška pokretanja fokusa:', err);
+    alert('Greška pri pokretanju fokusa');
+  }
+}
+
+// BACKEND TIMER
+function startBackendTimer() {
+  const fokusVrijeme = document.getElementById('fokus_vrijeme');
+  const korisnikId = localStorage.getItem('korisnikId');
   
-  // VRIJEME KONTROLE
-  let sati = 0;
-  let minute = 0;
+  // Provjeri status svakih 10 sekundi
+  const statusInterval = setInterval(async () => {
+    try {
+      const response = await fetch('https://gobeyondfocus-back-2.onrender.com/focus-status', {
+        method: 'GET',
+        headers: { 'user-id': korisnikId }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        
+        if (!data.inFocus || data.remainingMinutes <= 0) {
+          // FOKUS ZAVRŠEN - POZOVI BACKEND
+          clearInterval(statusInterval);
+          await endBackendFocus();
+          return;
+        }
+        
+        // AŽURIRAJ PRIKAZ VREMENA - SATI:MINUTE
+        const hours = Math.floor(data.remainingMinutes / 60);
+        const mins = data.remainingMinutes % 60;
+        fokusVrijeme.textContent = `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
+        
+        // Ako je blizu kraja
+        if (data.remainingMinutes <= 0) {
+          fokusVrijeme.style.color = '#00ff00';
+          fokusVrijeme.style.fontWeight = 'bold';
+        }
+      }
+    } catch (err) {
+      console.error('Greška provjere statusa:', err);
+    }
+  }, 10000); // Provjeri svakih 10 sekundi
+}
+
+// ZAVRŠI FOKUS
+async function endBackendFocus() {
+  const korisnikId = localStorage.getItem('korisnikId');
   
-  function azurirajPrikaz() {
-    const prikaz = document.getElementById('vrijeme_prikaz');
-    if (!prikaz) return;
-    const satStr = sati.toString().padStart(2, '0');
-    const minStr = minute.toString().padStart(2, '0');
-    prikaz.textContent = `${satStr}:${minStr}`;
+  try {
+    const response = await fetch('https://gobeyondfocus-back-2.onrender.com/end-focus', {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'user-id': korisnikId
+      }
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      
+      // AŽURIRAJ LOKALNE KOVANICE
+      localStorage.setItem('kovanice', data.totalCoins);
+      
+      // PRIKAŽI REZULTATE
+      alert(`🎉 Fokus završen! 
+⏰ Vrijeme provedeno: ${data.timeSpent} minuta
+💰 Zaradili ste: ${data.coinsEarned} kovanica
+🪙 Ukupno kovanica: ${data.totalCoins}`);
+      
+      // VRATI NA VRIJEME STRANICU
+      showPage('vrijeme');
+      prikaziKovanice(data.totalCoins);
+    } else {
+      console.error('Greška završavanja fokusa');
+      showPage('vrijeme');
+    }
+    
+  } catch (err) {
+    console.error('Greška završavanja fokusa:', err);
+    showPage('vrijeme');
+  }
+}
+
+// KUPOVINA OUTFITA - BACKEND
+async function buyOutfit(outfitName, price) {
+  const korisnikId = localStorage.getItem('korisnikId');
+  if (!korisnikId) {
+    alert('Molimo prijavite se!');
+    return;
+  }
+
+  try {
+    const response = await fetch('https://gobeyondfocus-back-2.onrender.com/buy-outfit', {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'user-id': korisnikId
+      },
+      body: JSON.stringify({ outfitName, price })
+    });
+    
+    if (response.ok) {
+      const result = await response.json();
+      
+      // AŽURIRAJ LOKALNE PODATKE
+      localStorage.setItem('kovanice', result.coins);
+      
+      // AŽURIRAJ userData S NOVIM OUTFITIMA
+      const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+      if (!userData.ownedOutfits.includes(outfitName)) {
+        userData.ownedOutfits.push(outfitName);
+        localStorage.setItem('userData', JSON.stringify(userData));
+      }
+      
+      alert(result.message);
+      
+      // OSVJEŽI PRIKAZ
+      prikaziOutfiteZaTrenutnogLika();
+      prikaziKovanice(result.coins);
+      
+    } else {
+      const error = await response.text();
+      alert('Greška: ' + error);
+    }
+  } catch (err) {
+    console.error('Greška kupovine:', err);
+    alert('Greška pri kupovini outfita');
+  }
+}
+
+function prikaziOutfiteZaTrenutnogLika() {
+  const wrapper = document.getElementById('outfit_cards_wrapper');
+  if (!wrapper) return;
+  wrapper.innerHTML = '';
+  
+  const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+  const odabraniLik = userData.selectedCharacter;
+  const ownedOutfits = userData.ownedOutfits || [];
+  const equippedOutfit = localStorage.getItem('equippedOutfit') || 'default';
+  
+  if (!odabraniLik) {
+    showPage('odabir');
+    return;
   }
   
-  document.getElementById('gore_vrijeme')?.addEventListener('click', () => {
-    minute += 10;
-    if (minute >= 60) {
-      minute = 0;
-      sati++;
-    }
-    azurirajPrikaz();
-  });
-  
-  document.getElementById('dolje_vrijeme')?.addEventListener('click', () => {
-    minute -= 10;
-    if (minute < 0) {
-      if (sati > 0) {
-        sati--;
-        minute = 50;
-      } else {
-        sati = 0;
-        minute = 0;
+  const outfitiZaLik = OUTFITI[odabraniLik] || [];
+  const grid = document.createElement('div');
+  grid.className = 'outfit_cards_grid';
+
+  outfitiZaLik.forEach((outfit, idx) => {
+    const card = document.createElement('div');
+    card.className = 'outfit_card';
+    
+    const kupljen = ownedOutfits.includes(outfit.ime);
+    const nosen = equippedOutfit === outfit.ime;
+    
+    card.innerHTML = `                        
+      <img src="${outfit.slika}" alt="Outfit ${idx + 1}">
+      <span class="outfit_card_name">${outfit.ime}</span>
+      <div class="outfit_card_price">${outfit.cijena} <img src="https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/kovanice.png?alt=media&token=5336525d-db0a-416c-8764-2af36f79ec15" style="width:18px;height:18px; vertical-align:middle;"> </div>
+      ${!kupljen ? '<button class="outfit_card_btn">Kupi outfit</button>' : ''}
+      ${kupljen && !nosen ? '<button class="equip_outfit_btn">Nosi outfit</button>' : ''}
+      ${nosen ? '<span class="nosen-label" style="color: gold; font-weight: bold;">Nosite ga!!</span>' : ''}
+      ${kupljen && !nosen ? '<span class="kupljeno-label" style="color: green; font-weight: bold;">Kupljeno</span>' : ''}
+    `;
+
+    // Event listeneri
+    if (!kupljen) {
+      const buyBtn = card.querySelector('.outfit_card_btn');
+      if (buyBtn) {
+        buyBtn.addEventListener('click', async () => {
+          await buyOutfit(outfit.ime, outfit.cijena);
+        });
       }
     }
-    azurirajPrikaz();
-  });
-  
-  azurirajPrikaz();
-  
-  // POČETNI PRIKAZ
-  setTimeout(() => {
-    showPage('registracija');
-    prikaziUsername();
-    prikaziOdabranogLika();
-    prikaziAvatar();
-    prikaziKovanice(localStorage.getItem('kovanice') || 0);
-  }, 100);
-});
+    
+    if (kupljen && !nosen) {
+      const equipBtn = card.querySelector('.equip_outfit_btn');
+      if (equipBtn) {
+        equipBtn.addEventListener('click', () => {
+          localStorage.setItem('equippedOutfit', outfit.ime);
+          prikaziOutfiteZaTrenutnogLika(); // Refresh prikaz
+        });
+      }
+    }
 
+    grid.appendChild(card);
+  });
+
+  wrapper.appendChild(grid);
+}
+
+function getCurrentOutfitSprite(character) {
+  const equippedOutfit = localStorage.getItem('equippedOutfit');
+  
+  // Ako je default ili nema opremljen outfit
+  if (!equippedOutfit || equippedOutfit === 'default') {
+    return LIKOVI[character]?.defaultSprite;
+  }
+  
+  // Pronađi sprite za opremljen outfit
+  const characterOutfits = OUTFITI[character] || [];
+  const outfit = characterOutfits.find(o => o.ime === equippedOutfit);
+  
+  return outfit?.sprite || LIKOVI[character]?.defaultSprite;
+}
+
+function animateSprite(elementId, spriteURL, frameWidth, frameHeight, frameCount, frameDuration) {
+  const el = document.getElementById(elementId);
+  if (!el) return;
+
+  if (el._spriteInterval) {
+    clearInterval(el._spriteInterval);
+    el._spriteInterval = null;
+  }
+  
+  setTimeout(() => {
+    el.style.backgroundImage = `url(${spriteURL})`;
+    
+    let frame = 0;
+    
+    el._spriteInterval = setInterval(() => {
+      const xPos = -frame * frameWidth;
+      el.style.backgroundPosition = `${xPos}px 0px`;
+      frame = (frame + 1) % frameCount;
+    }, frameDuration);
+  }, 10);
+}
+
+function prikaziOdabranogLika() {
+  const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+  const odabraniLik = userData.selectedCharacter; 
+
+  const element = document.getElementById('vrijeme_lik');
+  if (LIKOVI[odabraniLik] && element) {
+    element.innerHTML = `<img src="${LIKOVI[odabraniLik].slika}" alt="${odabraniLik}" style="width:95px; height:95px; border-radius: 10px;">`;
+  } else if (element) {
+    element.innerHTML = '';
+  }
+}
+
+function prikaziAvatar() {
+  const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+  const odabraniLik = userData.selectedCharacter; 
+  
+  const avatarEl = document.getElementById('vrijeme_avatar');
+  if (LIKOVI[odabraniLik] && avatarEl) {
+    avatarEl.style.backgroundColor = LIKOVI[odabraniLik].boja;
+    avatarEl.style.backgroundImage = `url(${LIKOVI[odabraniLik].pfp})`;
+    avatarEl.style.backgroundSize = "cover";
+    avatarEl.style.backgroundPosition = "center";
+    avatarEl.style.backgroundRepeat = "no-repeat";
+  }
+
+  const outfitAvatarEl = document.getElementById('outfit_avatar');
+  if (LIKOVI[odabraniLik] && outfitAvatarEl) {
+    outfitAvatarEl.style.backgroundColor = LIKOVI[odabraniLik].boja;
+    outfitAvatarEl.style.backgroundImage = `url(${LIKOVI[odabraniLik].pfp})`;
+    outfitAvatarEl.style.backgroundSize = "cover";
+    outfitAvatarEl.style.backgroundPosition = "center";
+    outfitAvatarEl.style.backgroundRepeat = "no-repeat";
+  }
+}
+
+function prikaziUsername() {
+  const username = localStorage.getItem('korisnickoIme') || "Username";
+  document.querySelectorAll('.vrijeme_username, .odabir_username, .outfit_username').forEach(el => {
+    el.textContent = username;
+  });
+}
+
+function prikaziKovanice(kolicina) {
+  document.querySelectorAll('#koin_iznos, #koin_iznos_outfit').forEach(el => {
+    if (el) {
+      el.innerHTML = `${kolicina} <img src="https://firebasestorage.googleapis.com/v0/b/gobeyondfocus.firebasestorage.app/o/kovanice.png?alt=media&token=5336525d-db0a-416c-8764-2af36f79ec15">`;
+    }
+  });
+}
