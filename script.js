@@ -824,7 +824,7 @@ async function zapocniFokus() {
   }
 
   try {
-    const response = await fetch('https://gobeyondfocus-back-2.onrender.com/start-focus', {
+    const response = await fetch('/api/start-focus', {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -1142,3 +1142,4 @@ function prikaziKovanice(kolicina) {
     }
   });
 }
+
